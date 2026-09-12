@@ -1,0 +1,2081 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Order Invoice</title>
+
+    <link
+        rel="stylesheet"
+        href="../css/app.css"
+    >
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+            margin: 0;
+            padding: 24px;
+
+            background: #f3f4f6;
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            color: #111827;
+        }
+
+
+        /* =========================================
+           ACTION BUTTONS
+        ========================================= */
+
+        .print-actions {
+
+            max-width: 900px;
+
+            margin: 0 auto 18px;
+
+            display: flex;
+
+            gap: 10px;
+
+        }
+
+
+        .print-actions button {
+
+            border: none;
+
+            padding: 11px 20px;
+
+            border-radius: 8px;
+
+            cursor: pointer;
+
+            font-size: 14px;
+
+            font-weight: 600;
+
+        }
+
+
+        .btn-print {
+
+            background: #2563eb;
+
+            color: white;
+
+        }
+
+
+        .btn-close {
+
+            background: #6b7280;
+
+            color: white;
+
+        }
+
+
+        /* =========================================
+           LOADING / ERROR
+        ========================================= */
+
+        .loading,
+        .error {
+
+            max-width: 900px;
+
+            margin: 50px auto;
+
+            padding: 30px;
+
+            background: white;
+
+            border-radius: 10px;
+
+            text-align: center;
+
+            box-shadow:
+                0 8px 25px
+                rgba(0,0,0,.08);
+
+        }
+
+
+        .error {
+
+            color: #b91c1c;
+
+            background: #fef2f2;
+
+            border:
+                1px solid #fecaca;
+
+        }
+
+
+        /* =========================================
+           INVOICE
+        ========================================= */
+
+        .invoice {
+
+            width: 100%;
+
+            max-width: 900px;
+
+            margin: 0 auto;
+
+            padding: 38px;
+
+            background: white;
+
+            box-shadow:
+                0 8px 30px
+                rgba(0,0,0,.08);
+
+        }
+
+
+        /* =========================================
+           HEADER
+        ========================================= */
+
+        .invoice-header {
+
+            display: flex;
+
+            justify-content:
+                space-between;
+
+            align-items:
+                flex-start;
+
+            gap: 25px;
+
+            padding-bottom: 20px;
+
+            margin-bottom: 24px;
+
+            border-bottom:
+                2px solid #111827;
+
+        }
+
+
+        .brand {
+
+            display: flex;
+
+            align-items: flex-start;
+
+            gap: 15px;
+
+            min-width: 0;
+
+        }
+
+
+        .brand-logo {
+
+            width: 72px;
+
+            height: 72px;
+
+            object-fit: contain;
+
+            border-radius: 8px;
+
+            display: none;
+
+        }
+
+
+        .brand-text h1 {
+
+            margin: 0 0 5px;
+
+            font-size: 27px;
+
+            line-height: 1.2;
+
+            word-break: break-word;
+
+        }
+
+
+        .brand-text p {
+
+            margin: 3px 0;
+
+            color: #6b7280;
+
+            font-size: 12px;
+
+            line-height: 1.5;
+
+        }
+
+
+        .invoice-title {
+
+            text-align: right;
+
+            min-width: 210px;
+
+        }
+
+
+        .invoice-title h2 {
+
+            margin: 0;
+
+            font-size: 28px;
+
+            letter-spacing: 1px;
+
+        }
+
+
+        .invoice-title p {
+
+            margin: 5px 0;
+
+            color: #6b7280;
+
+            font-size: 13px;
+
+        }
+
+
+        /* =========================================
+           INFO
+        ========================================= */
+
+        .info-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap: 18px;
+
+            margin-bottom: 25px;
+
+        }
+
+
+        .info-box {
+
+            border:
+                1px solid #e5e7eb;
+
+            border-radius: 8px;
+
+            padding: 15px;
+
+        }
+
+
+        .info-box h3 {
+
+            margin: 0 0 10px;
+
+            color: #6b7280;
+
+            font-size: 11px;
+
+            text-transform:
+                uppercase;
+
+            letter-spacing: .7px;
+
+        }
+
+
+        .info-box p {
+
+            margin: 5px 0;
+
+            font-size: 13px;
+
+            line-height: 1.5;
+
+        }
+
+
+        /* =========================================
+           TABLE
+        ========================================= */
+
+        table {
+
+            width: 100%;
+
+            border-collapse:
+                collapse;
+
+        }
+
+
+        th {
+
+            padding: 11px 10px;
+
+            background: #111827;
+
+            color: white;
+
+            font-size: 12px;
+
+            text-align: left;
+
+        }
+
+
+        td {
+
+            padding: 11px 10px;
+
+            border-bottom:
+                1px solid #e5e7eb;
+
+            font-size: 13px;
+
+        }
+
+
+        .text-right {
+
+            text-align: right;
+
+        }
+
+
+        /* =========================================
+           TOTALS
+        ========================================= */
+
+        .totals {
+
+            width: 360px;
+
+            margin-left: auto;
+
+            margin-top: 22px;
+
+        }
+
+
+        .total-row {
+
+            display: flex;
+
+            justify-content:
+                space-between;
+
+            gap: 20px;
+
+            padding: 7px 0;
+
+            font-size: 14px;
+
+        }
+
+
+        .grand-total {
+
+            margin-top: 7px;
+
+            padding: 13px 0;
+
+            border-top:
+                2px solid #111827;
+
+            border-bottom:
+                2px solid #111827;
+
+            font-size: 19px;
+
+            font-weight: 700;
+
+        }
+
+
+        .paid {
+
+            color: #15803d;
+
+            font-weight: 600;
+
+        }
+
+
+        .due {
+
+            color: #dc2626;
+
+            font-size: 16px;
+
+            font-weight: 700;
+
+        }
+
+
+        /* =========================================
+           PAYMENT DETAILS
+        ========================================= */
+
+        .payment-section {
+
+            margin-top: 28px;
+
+            padding: 16px;
+
+            border:
+                1px solid #e5e7eb;
+
+            border-radius: 8px;
+
+        }
+
+
+        .payment-section h3 {
+
+            margin: 0 0 12px;
+
+            font-size: 13px;
+
+            text-transform:
+                uppercase;
+
+            letter-spacing: .5px;
+
+        }
+
+
+        .payment-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap: 14px;
+
+        }
+
+
+        .payment-box {
+
+            padding: 12px;
+
+            background: #f9fafb;
+
+            border-radius: 7px;
+
+        }
+
+
+        .payment-box strong {
+
+            display: block;
+
+            margin-bottom: 5px;
+
+            font-size: 13px;
+
+        }
+
+
+        .payment-box span {
+
+            display: block;
+
+            color: #4b5563;
+
+            font-size: 12px;
+
+            line-height: 1.6;
+
+        }
+
+
+        /* =========================================
+           RISK
+        ========================================= */
+
+        .risk-box {
+
+            margin-top: 22px;
+
+            padding: 14px;
+
+            border:
+                1px solid #e5e7eb;
+
+            border-radius: 8px;
+
+            font-size: 12px;
+
+            line-height: 1.6;
+
+        }
+
+
+        /* =========================================
+           FOOTER
+        ========================================= */
+
+        .footer {
+
+            margin-top: 38px;
+
+            padding-top: 17px;
+
+            border-top:
+                1px solid #e5e7eb;
+
+            text-align: center;
+
+            color: #6b7280;
+
+            font-size: 11px;
+
+            line-height: 1.7;
+
+        }
+
+
+        .footer strong {
+
+            color: #111827;
+
+        }
+
+
+        /* =========================================
+           MOBILE
+        ========================================= */
+
+        @media (max-width: 700px) {
+
+            body {
+
+                padding: 10px;
+
+            }
+
+
+            .invoice {
+
+                padding: 20px;
+
+            }
+
+
+            .invoice-header {
+
+                flex-direction: column;
+
+            }
+
+
+            .invoice-title {
+
+                text-align: left;
+
+            }
+
+
+            .info-grid {
+
+                grid-template-columns:
+                    1fr;
+
+            }
+
+
+            .payment-grid {
+
+                grid-template-columns:
+                    1fr;
+
+            }
+
+
+            .totals {
+
+                width: 100%;
+
+            }
+
+
+            table {
+
+                font-size: 11px;
+
+            }
+
+
+            th,
+            td {
+
+                padding: 8px 5px;
+
+            }
+
+        }
+
+
+        /* =========================================
+           PRINT
+        ========================================= */
+
+        @media print {
+
+            @page {
+
+                size: A4;
+
+                margin: 10mm;
+
+            }
+
+
+            html,
+            body {
+
+                width: 100%;
+
+                margin: 0;
+
+                padding: 0;
+
+                background: white;
+
+            }
+
+
+            .print-actions,
+            .loading,
+            .error {
+
+                display: none !important;
+
+            }
+
+
+            .invoice {
+
+                display: block !important;
+
+                width: 100%;
+
+                max-width: none;
+
+                margin: 0;
+
+                padding: 0;
+
+                box-shadow: none;
+
+            }
+
+
+            .invoice-header,
+            .info-grid,
+            .totals,
+            .payment-section,
+            .risk-box,
+            .footer {
+
+                break-inside: avoid;
+
+                page-break-inside:
+                    avoid;
+
+            }
+
+
+            tr {
+
+                break-inside: avoid;
+
+                page-break-inside:
+                    avoid;
+
+            }
+
+
+            table {
+
+                page-break-inside:
+                    auto;
+
+            }
+
+
+            thead {
+
+                display: table-header-group;
+
+            }
+
+
+            .brand-logo {
+
+                -webkit-print-color-adjust:
+                    exact;
+
+                print-color-adjust:
+                    exact;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================
+     ACTIONS
+========================================= -->
+
+<div class="print-actions">
+
+    <button
+        class="btn-print"
+        onclick="window.print()"
+    >
+        🖨 Print Invoice
+    </button>
+
+
+    <button
+        class="btn-close"
+        onclick="window.close()"
+    >
+        Close
+    </button>
+
+</div>
+
+
+<!-- =========================================
+     LOADING
+========================================= -->
+
+<div
+    id="loading"
+    class="loading"
+>
+    Loading invoice...
+</div>
+
+
+<!-- =========================================
+     ERROR
+========================================= -->
+
+<div
+    id="error"
+    class="error"
+    style="display:none;"
+></div>
+
+
+<!-- =========================================
+     INVOICE
+========================================= -->
+
+<div
+    id="invoice"
+    class="invoice"
+    style="display:none;"
+>
+
+
+    <!-- HEADER -->
+
+    <div class="invoice-header">
+
+
+        <div class="brand">
+
+
+            <img
+                id="businessLogo"
+                class="brand-logo"
+                alt="Business Logo"
+            >
+
+
+            <div class="brand-text">
+
+
+                <h1 id="workspaceName">
+                    OrderOps AI
+                </h1>
+
+
+                <p id="businessDescription">
+                    Autonomous Order Operations
+                </p>
+
+
+                <p
+                    id="businessContact"
+                ></p>
+
+
+                <p
+                    id="businessAddress"
+                ></p>
+
+
+            </div>
+
+
+        </div>
+
+
+        <div class="invoice-title">
+
+
+            <h2>
+                INVOICE
+            </h2>
+
+
+            <p>
+
+                Order:
+
+                <strong
+                    id="orderNumber"
+                >
+                    -
+                </strong>
+
+            </p>
+
+
+            <p id="orderDate">
+                -
+            </p>
+
+
+        </div>
+
+
+    </div>
+
+
+    <!-- CUSTOMER -->
+
+    <div class="info-grid">
+
+
+        <div class="info-box">
+
+
+            <h3>
+                Bill To
+            </h3>
+
+
+            <p>
+
+                <strong
+                    id="customerName"
+                >
+                    -
+                </strong>
+
+            </p>
+
+
+            <p id="customerEmail">
+                -
+            </p>
+
+
+            <p id="customerPhone">
+                -
+            </p>
+
+
+            <p id="customerAddress">
+                -
+            </p>
+
+
+        </div>
+
+
+        <div class="info-box">
+
+
+            <h3>
+                Order Information
+            </h3>
+
+
+            <p>
+
+                <strong>
+                    Status:
+                </strong>
+
+                <span id="orderStatus">
+                    -
+                </span>
+
+            </p>
+
+
+            <p>
+
+                <strong>
+                    Risk Level:
+                </strong>
+
+                <span id="riskLevel">
+                    -
+                </span>
+
+            </p>
+
+
+            <p>
+
+                <strong>
+                    Risk Score:
+                </strong>
+
+                <span id="riskScore">
+                    0
+                </span>
+
+            </p>
+
+
+        </div>
+
+
+    </div>
+
+
+    <!-- ITEMS -->
+
+    <table>
+
+
+        <thead>
+
+            <tr>
+
+                <th>
+                    #
+                </th>
+
+
+                <th>
+                    Product
+                </th>
+
+
+                <th class="text-right">
+                    Quantity
+                </th>
+
+
+                <th class="text-right">
+                    Unit Price
+                </th>
+
+
+                <th class="text-right">
+                    Total
+                </th>
+
+            </tr>
+
+        </thead>
+
+
+        <tbody
+            id="itemsBody"
+        ></tbody>
+
+
+    </table>
+
+
+    <!-- TOTALS -->
+
+    <div class="totals">
+
+
+        <div class="total-row">
+
+            <span>
+                Subtotal
+            </span>
+
+            <strong id="subtotal">
+                Rs. 0.00
+            </strong>
+
+        </div>
+
+
+        <div class="total-row paid">
+
+            <span>
+                Paid / Recovered
+            </span>
+
+            <strong id="paidAmount">
+                Rs. 0.00
+            </strong>
+
+        </div>
+
+
+        <div class="total-row">
+
+            <span>
+                Refund
+            </span>
+
+            <strong id="refundAmount">
+                Rs. 0.00
+            </strong>
+
+        </div>
+
+
+        <div class="total-row grand-total">
+
+            <span>
+                GRAND TOTAL
+            </span>
+
+            <strong id="grandTotal">
+                Rs. 0.00
+            </strong>
+
+        </div>
+
+
+        <div class="total-row due">
+
+            <span>
+                REMAINING DUE
+            </span>
+
+            <strong id="remainingDue">
+                Rs. 0.00
+            </strong>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- PAYMENT DETAILS -->
+
+    <div
+        id="paymentSection"
+        class="payment-section"
+        style="display:none;"
+    >
+
+
+        <h3>
+            Payment Details
+        </h3>
+
+
+        <div class="payment-grid">
+
+
+            <div
+                id="bankBox"
+                class="payment-box"
+                style="display:none;"
+            >
+
+                <strong>
+                    Bank Account
+                </strong>
+
+                <span id="bankName">
+                    -
+                </span>
+
+                <span id="accountTitle">
+                    -
+                </span>
+
+                <span id="accountNumber">
+                    -
+                </span>
+
+            </div>
+
+
+            <div
+                id="jazzcashBox"
+                class="payment-box"
+                style="display:none;"
+            >
+
+                <strong>
+                    JazzCash
+                </strong>
+
+                <span id="jazzcash">
+                    -
+                </span>
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+    <!-- AI RISK -->
+
+    <div class="risk-box">
+
+
+        <strong>
+            OrderOps AI Risk Analysis
+        </strong>
+
+
+        <br>
+
+
+        Risk Level:
+
+        <span id="riskText">
+            -
+        </span>
+
+
+    </div>
+
+
+    <!-- FOOTER -->
+
+    <div class="footer">
+
+
+        Thank you for your business.
+
+
+        <br>
+
+
+        Generated by
+
+        <strong id="footerWorkspace">
+            OrderOps AI
+        </strong>
+
+
+    </div>
+
+
+</div>
+
+
+<!-- =========================================
+     API
+========================================= -->
+
+<script src="../js/api.js"></script>
+
+
+<script>
+
+/*
+=========================================================
+ORDEROPS AI PRINT SETTINGS
+=========================================================
+
+Settings page saves everything under:
+
+    orderops_settings
+
+The invoice reads the latest values every time
+the print page opens.
+
+=========================================================
+*/
+
+
+const SETTINGS_KEY =
+    "orderops_settings";
+
+
+const DEFAULT_SETTINGS = {
+
+    workspaceName:
+        "OrderOps AI",
+
+    currency:
+        "PKR",
+
+    phone:
+        "",
+
+    email:
+        "",
+
+    address:
+        "",
+
+    description:
+        "Autonomous Order Operations powered by AI agents.",
+
+    bankName:
+        "",
+
+    accountTitle:
+        "",
+
+    accountNumber:
+        "",
+
+    jazzcash:
+        "",
+
+    logo:
+        ""
+
+};
+
+
+/* =========================================
+   GET SETTINGS
+========================================= */
+
+function getPrintSettings() {
+
+    try {
+
+        const saved =
+            JSON.parse(
+                localStorage.getItem(
+                    SETTINGS_KEY
+                ) || "{}"
+            );
+
+
+        return {
+            ...DEFAULT_SETTINGS,
+            ...saved
+        };
+
+    }
+
+    catch(error) {
+
+        console.error(
+            "Settings error:",
+            error
+        );
+
+
+        return {
+            ...DEFAULT_SETTINGS
+        };
+
+    }
+
+}
+
+
+/* =========================================
+   CURRENCY
+========================================= */
+
+function formatMoney(value) {
+
+    const settings =
+        getPrintSettings();
+
+
+    const amount =
+        Number(value || 0);
+
+
+    if (
+        settings.currency ===
+        "USD"
+    ) {
+
+        return (
+            "$ " +
+            amount.toLocaleString(
+                "en-US",
+                {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }
+            )
+        );
+
+    }
+
+
+    return (
+        "Rs. " +
+        amount.toLocaleString(
+            "en-PK",
+            {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }
+        )
+    );
+
+}
+
+
+/* =========================================
+   LOAD BUSINESS SETTINGS
+========================================= */
+
+function renderBusinessSettings() {
+
+    const settings =
+        getPrintSettings();
+
+
+    /* Workspace name */
+
+    const workspaceName =
+        settings.workspaceName ||
+        "OrderOps AI";
+
+
+    document.getElementById(
+        "workspaceName"
+    ).textContent =
+        workspaceName;
+
+
+    document.getElementById(
+        "footerWorkspace"
+    ).textContent =
+        workspaceName;
+
+
+    /* Description */
+
+    document.getElementById(
+        "businessDescription"
+    ).textContent =
+        settings.description ||
+        "";
+
+
+    /* Contact */
+
+    const contactParts = [];
+
+
+    if (settings.phone) {
+
+        contactParts.push(
+            settings.phone
+        );
+
+    }
+
+
+    if (settings.email) {
+
+        contactParts.push(
+            settings.email
+        );
+
+    }
+
+
+    document.getElementById(
+        "businessContact"
+    ).textContent =
+        contactParts.join(
+            "  •  "
+        );
+
+
+    /* Address */
+
+    document.getElementById(
+        "businessAddress"
+    ).textContent =
+        settings.address ||
+        "";
+
+
+    /* Logo */
+
+    const logo =
+        document.getElementById(
+            "businessLogo"
+        );
+
+
+    if (settings.logo) {
+
+        logo.src =
+            settings.logo;
+
+        logo.style.display =
+            "block";
+
+    }
+
+    else {
+
+        logo.removeAttribute(
+            "src"
+        );
+
+        logo.style.display =
+            "none";
+
+    }
+
+
+    /* =====================================
+       PAYMENT DETAILS
+    ===================================== */
+
+    const paymentSection =
+        document.getElementById(
+            "paymentSection"
+        );
+
+
+    const bankBox =
+        document.getElementById(
+            "bankBox"
+        );
+
+
+    const jazzcashBox =
+        document.getElementById(
+            "jazzcashBox"
+        );
+
+
+    let hasPaymentDetails =
+        false;
+
+
+    /* Bank */
+
+    if (
+        settings.bankName ||
+        settings.accountTitle ||
+        settings.accountNumber
+    ) {
+
+        hasPaymentDetails =
+            true;
+
+
+        bankBox.style.display =
+            "block";
+
+
+        document.getElementById(
+            "bankName"
+        ).textContent =
+            settings.bankName ||
+            "";
+
+
+        document.getElementById(
+            "accountTitle"
+        ).textContent =
+            settings.accountTitle ||
+            "";
+
+
+        document.getElementById(
+            "accountNumber"
+        ).textContent =
+            settings.accountNumber ||
+            "";
+
+    }
+
+    else {
+
+        bankBox.style.display =
+            "none";
+
+    }
+
+
+    /* JazzCash */
+
+    if (settings.jazzcash) {
+
+        hasPaymentDetails =
+            true;
+
+
+        jazzcashBox.style.display =
+            "block";
+
+
+        document.getElementById(
+            "jazzcash"
+        ).textContent =
+            settings.jazzcash;
+
+    }
+
+    else {
+
+        jazzcashBox.style.display =
+            "none";
+
+    }
+
+
+    paymentSection.style.display =
+        hasPaymentDetails
+            ? "block"
+            : "none";
+
+}
+
+
+/* =========================================
+   LOAD ORDER
+========================================= */
+
+async function loadOrder() {
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+
+    const orderId =
+        params.get("id");
+
+
+    if (!orderId) {
+
+        throw new Error(
+            "Order ID is missing."
+        );
+
+    }
+
+
+    console.log(
+        "Loading Order ID:",
+        orderId
+    );
+
+
+    /*
+     * IMPORTANT:
+     *
+     * apiFetch() already returns parsed JSON.
+     *
+     * DO NOT use response.json()
+     */
+
+    const order =
+        await apiFetch(
+            `/api/orders/${orderId}`
+        );
+
+
+    console.log(
+        "Backend order:",
+        order
+    );
+
+
+    if (!order) {
+
+        throw new Error(
+            "Backend returned no order data."
+        );
+
+    }
+
+
+    renderOrder(order);
+
+}
+
+
+/* =========================================
+   RENDER ORDER
+========================================= */
+
+function renderOrder(order) {
+
+
+    /* =====================================
+       BUSINESS SETTINGS
+    ===================================== */
+
+    renderBusinessSettings();
+
+
+    /* =====================================
+       ORDER
+    ===================================== */
+
+    document.getElementById(
+        "orderNumber"
+    ).textContent =
+        order.order_number ||
+        "-";
+
+
+    document.getElementById(
+        "orderDate"
+    ).textContent =
+        formatDate(
+            order.created_at
+        );
+
+
+    document.getElementById(
+        "orderStatus"
+    ).textContent =
+        order.status ||
+        "-";
+
+
+    document.getElementById(
+        "riskLevel"
+    ).textContent =
+        order.risk_level ||
+        "low";
+
+
+    document.getElementById(
+        "riskScore"
+    ).textContent =
+        order.risk_score ||
+        0;
+
+
+    document.getElementById(
+        "riskText"
+    ).textContent =
+        `${
+            order.risk_level ||
+            "low"
+        } (${
+            order.risk_score ||
+            0
+        })`;
+
+
+    /* =====================================
+       CUSTOMER
+    ===================================== */
+
+    const customer =
+        order.customer ||
+        {};
+
+
+    document.getElementById(
+        "customerName"
+    ).textContent =
+        order.customer_name ||
+        customer.name ||
+        "Unknown Customer";
+
+
+    document.getElementById(
+        "customerEmail"
+    ).textContent =
+        customer.email ||
+        "";
+
+
+    document.getElementById(
+        "customerPhone"
+    ).textContent =
+        customer.phone ||
+        "";
+
+
+    document.getElementById(
+        "customerAddress"
+    ).textContent =
+        customer.address ||
+        "";
+
+
+    /* =====================================
+       ITEMS
+    ===================================== */
+
+    const tbody =
+        document.getElementById(
+            "itemsBody"
+        );
+
+
+    tbody.innerHTML =
+        "";
+
+
+    let subtotal =
+        0;
+
+
+    const items =
+        Array.isArray(
+            order.items
+        )
+            ? order.items
+            : [];
+
+
+    if (
+        items.length === 0
+    ) {
+
+        tbody.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="5"
+                    style="
+                        text-align:center;
+                        padding:20px;
+                    "
+                >
+                    No items found.
+                </td>
+
+            </tr>
+
+        `;
+
+    }
+
+
+    items.forEach(
+        (item, index) => {
+
+
+            const quantity =
+                Number(
+                    item.quantity ||
+                    0
+                );
+
+
+            const unitPrice =
+                Number(
+                    item.unit_price ||
+                    0
+                );
+
+
+            const lineTotal =
+                Number(
+                    item.line_total ??
+                    (
+                        quantity *
+                        unitPrice
+                    )
+                );
+
+
+            subtotal +=
+                lineTotal;
+
+
+            const row =
+                document.createElement(
+                    "tr"
+                );
+
+
+            row.innerHTML = `
+
+                <td>
+                    ${index + 1}
+                </td>
+
+                <td>
+                    ${escapeHtml(
+                        item.product_name ||
+                        "Product"
+                    )}
+                </td>
+
+                <td class="text-right">
+                    ${quantity}
+                </td>
+
+                <td class="text-right">
+                    ${formatMoney(
+                        unitPrice
+                    )}
+                </td>
+
+                <td class="text-right">
+                    ${formatMoney(
+                        lineTotal
+                    )}
+                </td>
+
+            `;
+
+
+            tbody.appendChild(
+                row
+            );
+
+        }
+    );
+
+
+    /* =====================================
+       TOTALS
+    ===================================== */
+
+    const grandTotal =
+        Number(
+            order.total_amount ??
+            subtotal
+        );
+
+
+    const paid =
+        Number(
+            order.recovered_amount ||
+            0
+        );
+
+
+    const refund =
+        Number(
+            order.refund_amount ||
+            0
+        );
+
+
+    const remainingDue =
+        Math.max(
+            grandTotal -
+            paid -
+            refund,
+            0
+        );
+
+
+    document.getElementById(
+        "subtotal"
+    ).textContent =
+        formatMoney(
+            subtotal
+        );
+
+
+    document.getElementById(
+        "paidAmount"
+    ).textContent =
+        formatMoney(
+            paid
+        );
+
+
+    document.getElementById(
+        "refundAmount"
+    ).textContent =
+        formatMoney(
+            refund
+        );
+
+
+    document.getElementById(
+        "grandTotal"
+    ).textContent =
+        formatMoney(
+            grandTotal
+        );
+
+
+    document.getElementById(
+        "remainingDue"
+    ).textContent =
+        formatMoney(
+            remainingDue
+        );
+
+
+    /* =====================================
+       SHOW
+    ===================================== */
+
+    document.getElementById(
+        "loading"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "error"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "invoice"
+    ).style.display =
+        "block";
+
+}
+
+
+/* =========================================
+   DATE
+========================================= */
+
+function formatDate(value) {
+
+    if (!value) {
+
+        return "-";
+
+    }
+
+
+    const date =
+        new Date(value);
+
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+
+        return value;
+
+    }
+
+
+    return date.toLocaleDateString(
+        "en-PK",
+        {
+            year: "numeric",
+            month: "short",
+            day: "numeric"
+        }
+    );
+
+}
+
+
+/* =========================================
+   INIT
+========================================= */
+
+async function init() {
+
+    try {
+
+        await loadOrder();
+
+    }
+
+    catch(error) {
+
+        console.error(
+            "Order print error:",
+            error
+        );
+
+
+        document.getElementById(
+            "loading"
+        ).style.display =
+            "none";
+
+
+        const errorBox =
+            document.getElementById(
+                "error"
+            );
+
+
+        errorBox.style.display =
+            "block";
+
+
+        errorBox.textContent =
+            "Unable to load invoice: " +
+            (
+                error.message ||
+                "Unknown error"
+            );
+
+    }
+
+}
+
+
+init();
+
+</script>
+
+</body>
+
+</html>

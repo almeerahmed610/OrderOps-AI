@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Products | OrderOps AI</title>
+
+<link rel="stylesheet"
+href="css/app.css">
+
+</head>
+
+<body>
+
+<aside class="sidebar">
+
+<div class="logo">
+Order<span>Ops</span> AI
+</div>
+
+<a class="nav-link"
+href="dashboard.html">
+📊 Dashboard
+</a>
+
+<a class="nav-link"
+href="customers.html">
+👥 Customers
+</a>
+
+<a class="nav-link active"
+href="products.html">
+📦 Products
+</a>
+
+<a class="nav-link"
+href="orders.html">
+🧾 Orders
+</a>
+
+<a class="nav-link"
+href="review-queue.html">
+⚠️ Review Queue
+</a>
+
+<a class="nav-link"
+href="ai-agents.html">
+🤖 AI Agents
+</a>
+
+<a class="nav-link"
+href="reports.html">
+📈 Reports
+</a>
+
+<a class="nav-link"
+href="settings.html">
+⚙️ Settings
+</a>
+
+<a class="nav-link"
+href="#"
+onclick="logout();return false;">
+🚪 Logout
+</a>
+
+</aside>
+
+
+<main class="main">
+
+<div class="topbar">
+
+<div>
+
+<h1 class="page-title">
+Products
+</h1>
+
+<div class="page-subtitle">
+Products and inventory management
+</div>
+
+</div>
+
+</div>
+
+
+<div class="card">
+
+<h2 class="card-title">
+Add Product
+</h2>
+
+<br>
+
+
+<form id="productForm"
+class="form-grid">
+
+<div class="field">
+
+<label>SKU *</label>
+
+<input
+id="sku"
+required
+placeholder="PROD-001">
+
+</div>
+
+
+<div class="field">
+
+<label>Product Name *</label>
+
+<input
+id="productName"
+required
+placeholder="Premium Water Bottle">
+
+</div>
+
+
+<div class="field">
+
+<label>Price *</label>
+
+<input
+id="price"
+type="number"
+step="0.01"
+min="0"
+required
+placeholder="250">
+
+</div>
+
+
+<div class="field">
+
+<label>Stock Quantity *</label>
+
+<input
+id="stock"
+type="number"
+min="0"
+required
+placeholder="100">
+
+</div>
+
+
+<div class="field full">
+
+<label>Description</label>
+
+<textarea
+id="description"
+placeholder="Product description"></textarea>
+
+</div>
+
+
+<div class="actions">
+
+<button
+class="btn"
+type="submit">
+
+Add Product
+
+</button>
+
+</div>
+
+</form>
+
+</div>
+
+
+<div class="card">
+
+<div class="toolbar">
+
+<h2 class="card-title">
+Inventory
+</h2>
+
+<input
+id="search"
+class="search"
+placeholder="Search products...">
+
+</div>
+
+
+<div class="table-wrapper">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>ID</th>
+<th>SKU</th>
+<th>Name</th>
+<th>Price</th>
+<th>Stock</th>
+<th>Status</th>
+<th>Action</th>
+
+</tr>
+
+</thead>
+
+<tbody id="rows"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</main>
+
+
+<script src="js/api.js"></script>
+
+<script>
+
+let products = [];
+
+
+async function loadProducts() {
+
+    try {
+
+        products =
+            await apiFetch(
+                "/api/products/"
+            );
+
+        render();
+
+    }
+
+    catch(error) {
+
+        alert(error.message);
+
+    }
+
+}
+
+
+function render() {
+
+    const q =
+        document
+        .getElementById("search")
+        .value
+        .toLowerCase();
+
+
+    const filtered =
+        products.filter(product =>
+
+            `${product.sku || ""}
+             ${product.name || ""}`
+            .toLowerCase()
+            .includes(q)
+
+    );
+
+
+    document.getElementById(
+        "rows"
+    ).innerHTML = filtered.length
+
+        ? filtered.map(product => `
+
+            <tr>
+
+                <td>
+                    ${product.id}
+                </td>
+
+                <td>
+                    ${escapeHtml(
+                        product.sku
+                    )}
+                </td>
+
+                <td>
+                    <strong>
+                    ${escapeHtml(
+                        product.name
+                    )}
+                    </strong>
+                </td>
+
+                <td>
+                    ${money(product.price)}
+                </td>
+
+                <td>
+
+                    <span class="badge
+                    ${
+                        product.stock_quantity <= 10
+                        ? "badge-red"
+                        : "badge-green"
+                    }">
+
+                    ${product.stock_quantity}
+
+                    </span>
+
+                </td>
+
+                <td>
+
+                    ${
+                        product.is_active
+                        ? `<span class="badge badge-green">Active</span>`
+                        : `<span class="badge badge-gray">Inactive</span>`
+                    }
+
+                </td>
+
+                <td>
+
+                    ${
+                        product.is_active
+
+                        ?
+
+                        `<button
+                        class="btn btn-danger"
+                        onclick="deleteProduct(${product.id})">
+
+                        Deactivate
+
+                        </button>`
+
+                        :
+
+                        "-"
+                    }
+
+                </td>
+
+            </tr>
+
+        `).join("")
+
+        :
+
+        `
+            <tr>
+                <td colspan="7"
+                    class="empty">
+
+                    No products found.
+
+                </td>
+            </tr>
+        `;
+
+}
+
+
+async function deleteProduct(id) {
+
+    if (!confirm("Deactivate this product?")) {
+        return;
+    }
+
+
+    try {
+
+        await apiFetch(
+            `/api/products/${id}`,
+            {
+                method: "DELETE"
+            }
+        );
+
+
+        await loadProducts();
+
+    }
+
+    catch(error) {
+
+        alert(error.message);
+
+    }
+
+}
+
+
+document.getElementById(
+    "productForm"
+).addEventListener(
+    "submit",
+    async function(event) {
+
+        event.preventDefault();
+
+
+        try {
+
+            await apiFetch(
+                "/api/products/",
+                {
+
+                    method: "POST",
+
+                    body: {
+
+                        sku:
+                            document
+                            .getElementById("sku")
+                            .value
+                            .trim(),
+
+                        name:
+                            document
+                            .getElementById("productName")
+                            .value
+                            .trim(),
+
+                        description:
+                            document
+                            .getElementById("description")
+                            .value
+                            .trim() || null,
+
+                        price:
+                            Number(
+                                document
+                                .getElementById("price")
+                                .value
+                            ),
+
+                        stock_quantity:
+                            Number(
+                                document
+                                .getElementById("stock")
+                                .value
+                            )
+
+                    }
+
+                }
+            );
+
+
+            this.reset();
+
+            await loadProducts();
+
+        }
+
+        catch(error) {
+
+            alert(error.message);
+
+        }
+
+    }
+);
+
+
+document.getElementById(
+    "search"
+).addEventListener(
+    "input",
+    render
+);
+
+
+if (requireAuth()) {
+    loadProducts();
+}
+
+</script>
+
+</body>
+</html>

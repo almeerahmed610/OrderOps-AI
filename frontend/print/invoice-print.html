@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Invoice - OrderOps AI</title>
+
+    <link
+        rel="stylesheet"
+        href="../css/app.css"
+    >
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 24px;
+            background: #f3f4f6;
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+            color: #111827;
+        }
+
+        /* =========================
+           ACTION BUTTONS
+        ========================= */
+
+        .print-actions {
+            max-width: 900px;
+            margin: 0 auto 18px;
+
+            display: flex;
+            gap: 10px;
+        }
+
+        .print-actions button {
+            border: none;
+            border-radius: 8px;
+
+            padding: 11px 20px;
+
+            cursor: pointer;
+
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .btn-print {
+            background: #2563eb;
+            color: #ffffff;
+        }
+
+        .btn-print:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-close {
+            background: #6b7280;
+            color: #ffffff;
+        }
+
+        .btn-close:hover {
+            background: #4b5563;
+        }
+
+        /* =========================
+           LOADING / ERROR
+        ========================= */
+
+        .loading,
+        .error {
+            max-width: 900px;
+
+            margin: 50px auto;
+
+            padding: 30px;
+
+            background: #ffffff;
+
+            border-radius: 10px;
+
+            text-align: center;
+
+            box-shadow:
+                0 8px 25px
+                rgba(0, 0, 0, 0.08);
+        }
+
+        .error {
+            color: #b91c1c;
+
+            border:
+                1px solid #fecaca;
+
+            background: #fef2f2;
+        }
+
+        /* =========================
+           INVOICE
+        ========================= */
+
+        .invoice {
+            width: 100%;
+            max-width: 900px;
+
+            margin: 0 auto;
+
+            background: #ffffff;
+
+            padding: 40px;
+
+            box-shadow:
+                0 8px 30px
+                rgba(0, 0, 0, 0.08);
+        }
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        .invoice-header {
+            display: flex;
+
+            justify-content:
+                space-between;
+
+            align-items:
+                flex-start;
+
+            border-bottom:
+                2px solid #111827;
+
+            padding-bottom: 20px;
+
+            margin-bottom: 25px;
+        }
+
+        .brand h1 {
+            margin: 0 0 6px;
+
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .brand p {
+            margin: 0;
+
+            color: #6b7280;
+
+            font-size: 13px;
+        }
+
+        .invoice-title {
+            text-align: right;
+        }
+
+        .invoice-title h2 {
+            margin: 0;
+
+            font-size: 28px;
+
+            letter-spacing: 1px;
+        }
+
+        .invoice-title p {
+            margin: 5px 0 0;
+
+            color: #6b7280;
+
+            font-size: 13px;
+        }
+
+        /* =========================
+           INFO
+        ========================= */
+
+        .info-grid {
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap: 20px;
+
+            margin-bottom: 28px;
+        }
+
+        .info-box {
+            border:
+                1px solid #e5e7eb;
+
+            border-radius: 8px;
+
+            padding: 16px;
+        }
+
+        .info-box h3 {
+            margin: 0 0 10px;
+
+            font-size: 12px;
+
+            text-transform:
+                uppercase;
+
+            letter-spacing:
+                .6px;
+
+            color: #6b7280;
+        }
+
+        .info-box p {
+            margin: 5px 0;
+
+            font-size: 14px;
+        }
+
+        /* =========================
+           TABLE
+        ========================= */
+
+        table {
+            width: 100%;
+
+            border-collapse:
+                collapse;
+
+            margin-top: 5px;
+        }
+
+        thead th {
+            background: #111827;
+
+            color: #ffffff;
+
+            padding:
+                11px 10px;
+
+            text-align: left;
+
+            font-size: 12px;
+        }
+
+        tbody td {
+            padding:
+                12px 10px;
+
+            border-bottom:
+                1px solid #e5e7eb;
+
+            font-size: 13px;
+        }
+
+        tbody tr:last-child td {
+            border-bottom:
+                1px solid #d1d5db;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        /* =========================
+           TOTALS
+        ========================= */
+
+        .totals {
+            width: 360px;
+
+            margin-left: auto;
+
+            margin-top: 25px;
+        }
+
+        .total-row {
+            display: flex;
+
+            justify-content:
+                space-between;
+
+            align-items: center;
+
+            padding:
+                7px 0;
+
+            font-size: 14px;
+        }
+
+        .total-row.grand {
+            border-top:
+                2px solid #111827;
+
+            margin-top: 8px;
+
+            padding-top: 13px;
+
+            font-size: 20px;
+
+            font-weight: 700;
+        }
+
+        .total-row.paid {
+            color: #15803d;
+
+            font-weight: 600;
+        }
+
+        .total-row.due {
+            color: #dc2626;
+
+            font-size: 17px;
+
+            font-weight: 700;
+        }
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        .footer {
+            margin-top: 45px;
+
+            padding-top: 18px;
+
+            border-top:
+                1px solid #e5e7eb;
+
+            text-align: center;
+
+            color: #6b7280;
+
+            font-size: 12px;
+
+            line-height: 1.6;
+        }
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 700px) {
+
+            body {
+                padding: 10px;
+            }
+
+            .invoice {
+                padding: 20px;
+            }
+
+            .invoice-header {
+                flex-direction:
+                    column;
+
+                gap: 18px;
+            }
+
+            .invoice-title {
+                text-align: left;
+            }
+
+            .info-grid {
+                grid-template-columns:
+                    1fr;
+            }
+
+            .totals {
+                width: 100%;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            thead th,
+            tbody td {
+                padding:
+                    8px 6px;
+            }
+        }
+
+        /* =========================
+           PRINT
+        ========================= */
+
+        @media print {
+
+            @page {
+                size: A4;
+
+                margin: 12mm;
+            }
+
+            html,
+            body {
+                width: 100%;
+
+                background:
+                    #ffffff;
+
+                padding: 0;
+
+                margin: 0;
+            }
+
+            .print-actions {
+                display: none !important;
+            }
+
+            .loading,
+            .error {
+                display: none !important;
+            }
+
+            .invoice {
+                display: block !important;
+
+                width: 100%;
+
+                max-width: none;
+
+                margin: 0;
+
+                padding: 0;
+
+                box-shadow: none;
+            }
+
+            .invoice-header {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+
+            .info-grid {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+
+            table {
+                break-inside: auto;
+            }
+
+            tr {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+
+            .totals {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+
+            .footer {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <!-- =========================
+         ACTIONS
+    ========================= -->
+
+    <div class="print-actions">
+
+        <button
+            type="button"
+            class="btn-print"
+            onclick="window.print()"
+        >
+            🖨 Print Invoice
+        </button>
+
+        <button
+            type="button"
+            class="btn-close"
+            onclick="window.close()"
+        >
+            Close
+        </button>
+
+    </div>
+
+
+    <!-- =========================
+         LOADING
+    ========================= -->
+
+    <div
+        id="loading"
+        class="loading"
+    >
+        Loading invoice...
+    </div>
+
+
+    <!-- =========================
+         ERROR
+    ========================= -->
+
+    <div
+        id="error"
+        class="error"
+        style="display:none;"
+    ></div>
+
+
+    <!-- =========================
+         INVOICE
+    ========================= -->
+
+    <div
+        id="invoice"
+        class="invoice"
+        style="display:none;"
+    >
+
+        <!-- HEADER -->
+
+        <div class="invoice-header">
+
+            <div class="brand">
+
+                <h1>
+                    OrderOps AI
+                </h1>
+
+                <p>
+                    Autonomous Order Operations
+                </p>
+
+            </div>
+
+
+            <div class="invoice-title">
+
+                <h2>
+                    INVOICE
+                </h2>
+
+                <p>
+                    Invoice:
+                    <strong id="invoiceNumber">
+                        -
+                    </strong>
+                </p>
+
+                <p id="invoiceDate">
+                    -
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- CUSTOMER / ORDER -->
+
+        <div class="info-grid">
+
+            <div class="info-box">
+
+                <h3>
+                    Bill To
+                </h3>
+
+                <p>
+                    <strong id="customerName">
+                        -
+                    </strong>
+                </p>
+
+                <p id="customerEmail">
+                    -
+                </p>
+
+                <p id="customerPhone">
+                    -
+                </p>
+
+                <p id="customerAddress">
+                    -
+                </p>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <h3>
+                    Order Information
+                </h3>
+
+                <p>
+                    <strong>
+                        Order:
+                    </strong>
+
+                    <span id="orderNumber">
+                        -
+                    </span>
+                </p>
+
+                <p>
+                    <strong>
+                        Status:
+                    </strong>
+
+                    <span id="orderStatus">
+                        -
+                    </span>
+                </p>
+
+                <p>
+                    <strong>
+                        Risk:
+                    </strong>
+
+                    <span id="riskLevel">
+                        -
+                    </span>
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- ITEMS -->
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        #
+                    </th>
+
+                    <th>
+                        Product
+                    </th>
+
+                    <th class="text-right">
+                        Qty
+                    </th>
+
+                    <th class="text-right">
+                        Unit Price
+                    </th>
+
+                    <th class="text-right">
+                        Total
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody
+                id="itemsBody"
+            ></tbody>
+
+        </table>
+
+
+        <!-- TOTALS -->
+
+        <div class="totals">
+
+            <div class="total-row">
+
+                <span>
+                    Subtotal
+                </span>
+
+                <strong id="subtotal">
+                    Rs. 0.00
+                </strong>
+
+            </div>
+
+
+            <div class="total-row paid">
+
+                <span>
+                    Paid / Recovered
+                </span>
+
+                <strong id="paidAmount">
+                    Rs. 0.00
+                </strong>
+
+            </div>
+
+
+            <div class="total-row">
+
+                <span>
+                    Refund
+                </span>
+
+                <strong id="refundAmount">
+                    Rs. 0.00
+                </strong>
+
+            </div>
+
+
+            <div class="total-row grand">
+
+                <span>
+                    GRAND TOTAL
+                </span>
+
+                <strong id="grandTotal">
+                    Rs. 0.00
+                </strong>
+
+            </div>
+
+
+            <div class="total-row due">
+
+                <span>
+                    REMAINING DUE
+                </span>
+
+                <strong id="remainingDue">
+                    Rs. 0.00
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- FOOTER -->
+
+        <div class="footer">
+
+            Thank you for your business.
+
+            <br>
+
+            Generated by
+            <strong>
+                OrderOps AI
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <!-- API -->
+
+    <script src="../js/api.js"></script>
+
+
+    <script>
+
+        /*
+         * IMPORTANT
+         *
+         * apiFetch() already parses JSON.
+         *
+         * Therefore:
+         *
+         * WRONG:
+         * const response = await apiFetch(...);
+         * const data = await response.json();
+         *
+         * CORRECT:
+         * const data = await apiFetch(...);
+         */
+
+
+        async function loadInvoice() {
+
+            const params =
+                new URLSearchParams(
+                    window.location.search
+                );
+
+
+            const orderId =
+                params.get("id");
+
+
+            if (!orderId) {
+
+                throw new Error(
+                    "Order ID is missing from URL."
+                );
+            }
+
+
+            console.log(
+                "Invoice loading for order:",
+                orderId
+            );
+
+
+            /*
+             * apiFetch returns JSON directly.
+             */
+
+            const order =
+                await apiFetch(
+                    `/api/orders/${orderId}`
+                );
+
+
+            console.log(
+                "Invoice order data:",
+                order
+            );
+
+
+            if (!order) {
+
+                throw new Error(
+                    "Backend returned empty order data."
+                );
+            }
+
+
+            renderInvoice(order);
+        }
+
+
+        function renderInvoice(order) {
+
+            /*
+             * Invoice information
+             */
+
+            document.getElementById(
+                "invoiceNumber"
+            ).textContent =
+                order.order_number || "-";
+
+
+            document.getElementById(
+                "invoiceDate"
+            ).textContent =
+                formatDate(
+                    order.created_at
+                );
+
+
+            /*
+             * Order information
+             */
+
+            document.getElementById(
+                "orderNumber"
+            ).textContent =
+                order.order_number || "-";
+
+
+            document.getElementById(
+                "orderStatus"
+            ).textContent =
+                order.status || "-";
+
+
+            document.getElementById(
+                "riskLevel"
+            ).textContent =
+                order.risk_level || "low";
+
+
+            /*
+             * Customer
+             */
+
+            const customer =
+                order.customer || {};
+
+
+            document.getElementById(
+                "customerName"
+            ).textContent =
+                order.customer_name ||
+                customer.name ||
+                "Unknown Customer";
+
+
+            document.getElementById(
+                "customerEmail"
+            ).textContent =
+                customer.email || "";
+
+
+            document.getElementById(
+                "customerPhone"
+            ).textContent =
+                customer.phone || "";
+
+
+            document.getElementById(
+                "customerAddress"
+            ).textContent =
+                customer.address || "";
+
+
+            /*
+             * Products
+             */
+
+            const tbody =
+                document.getElementById(
+                    "itemsBody"
+                );
+
+
+            tbody.innerHTML = "";
+
+
+            let subtotal = 0;
+
+
+            const items =
+                Array.isArray(order.items)
+                    ? order.items
+                    : [];
+
+
+            if (items.length === 0) {
+
+                const row =
+                    document.createElement("tr");
+
+
+                row.innerHTML = `
+                    <td colspan="5"
+                        style="text-align:center;">
+                        No order items found.
+                    </td>
+                `;
+
+
+                tbody.appendChild(row);
+
+            }
+
+
+            items.forEach(
+                (item, index) => {
+
+                    const quantity =
+                        Number(
+                            item.quantity || 0
+                        );
+
+
+                    const unitPrice =
+                        Number(
+                            item.unit_price || 0
+                        );
+
+
+                    const lineTotal =
+                        Number(
+                            item.line_total ??
+                            (
+                                quantity *
+                                unitPrice
+                            )
+                        );
+
+
+                    subtotal +=
+                        lineTotal;
+
+
+                    const row =
+                        document.createElement(
+                            "tr"
+                        );
+
+
+                    row.innerHTML = `
+
+                        <td>
+                            ${index + 1}
+                        </td>
+
+                        <td>
+                            ${escapeHtml(
+                                item.product_name ||
+                                "Product"
+                            )}
+                        </td>
+
+                        <td class="text-right">
+                            ${quantity}
+                        </td>
+
+                        <td class="text-right">
+                            ${money(unitPrice)}
+                        </td>
+
+                        <td class="text-right">
+                            ${money(lineTotal)}
+                        </td>
+
+                    `;
+
+
+                    tbody.appendChild(row);
+
+                }
+            );
+
+
+            /*
+             * Amount calculations
+             */
+
+            const grandTotal =
+                Number(
+                    order.total_amount ??
+                    subtotal
+                );
+
+
+            const paid =
+                Number(
+                    order.recovered_amount || 0
+                );
+
+
+            const refund =
+                Number(
+                    order.refund_amount || 0
+                );
+
+
+            const remainingDue =
+                Math.max(
+                    grandTotal -
+                    paid -
+                    refund,
+                    0
+                );
+
+
+            /*
+             * Display totals
+             */
+
+            document.getElemen

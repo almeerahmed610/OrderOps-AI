@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Account | OrderOps AI</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+    margin:0;
+    min-height:100vh;
+    font-family:Inter,Segoe UI,Arial,sans-serif;
+    background:linear-gradient(135deg,#0f172a,#172554,#0284c7);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.container{
+    width:100%;
+    max-width:430px;
+    padding:20px;
+}
+
+.card{
+    background:#fff;
+    border-radius:22px;
+    padding:38px;
+    box-shadow:0 25px 70px rgba(0,0,0,.3);
+}
+
+.logo{
+    width:64px;
+    height:64px;
+    border-radius:18px;
+    background:linear-gradient(135deg,#0284c7,#2563eb);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:25px;
+    font-weight:900;
+    margin-bottom:20px;
+}
+
+h1{
+    margin:0;
+    color:#0f172a;
+    font-size:28px;
+}
+
+.subtitle{
+    margin:8px 0 25px;
+    color:#64748b;
+    font-size:14px;
+}
+
+.field{
+    margin-bottom:16px;
+}
+
+label{
+    display:block;
+    margin-bottom:7px;
+    color:#334155;
+    font-size:13px;
+    font-weight:700;
+}
+
+input{
+    width:100%;
+    height:48px;
+    padding:0 14px;
+    border:1px solid #dbe3ec;
+    border-radius:11px;
+    outline:none;
+    font-size:14px;
+}
+
+input:focus{
+    border-color:#0284c7;
+    box-shadow:0 0 0 3px rgba(2,132,199,.1);
+}
+
+button{
+    width:100%;
+    height:50px;
+    border:0;
+    border-radius:11px;
+    background:linear-gradient(135deg,#0284c7,#2563eb);
+    color:#fff;
+    font-size:15px;
+    font-weight:800;
+    cursor:pointer;
+}
+
+button:disabled{
+    opacity:.6;
+}
+
+.error{
+    display:none;
+    background:#fef2f2;
+    color:#b91c1c;
+    border:1px solid #fecaca;
+    padding:11px;
+    border-radius:10px;
+    margin-bottom:15px;
+    font-size:13px;
+}
+
+.login{
+    text-align:center;
+    margin-top:20px;
+    color:#64748b;
+    font-size:13px;
+}
+
+.login a{
+    color:#0284c7;
+    font-weight:800;
+    text-decoration:none;
+}
+
+.brand{
+    text-align:center;
+    margin-top:20px;
+    color:rgba(255,255,255,.75);
+    font-size:12px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card">
+
+<div class="logo">OA</div>
+
+<h1>Create Account</h1>
+
+<div class="subtitle">
+Create your OrderOps AI administrator account
+</div>
+
+<div id="errorBox" class="error"></div>
+
+<form id="registerForm">
+
+<div class="field">
+<label>Full Name</label>
+<input
+    id="full_name"
+    type="text"
+    minlength="2"
+    maxlength="150"
+    placeholder="Your full name"
+    required
+>
+</div>
+
+<div class="field">
+<label>Email Address</label>
+<input
+    id="email"
+    type="email"
+    placeholder="you@example.com"
+    required
+>
+</div>
+
+<div class="field">
+<label>Password</label>
+<input
+    id="password"
+    type="password"
+    minlength="6"
+    maxlength="128"
+    placeholder="Minimum 6 characters"
+    required
+>
+</div>
+
+<div class="field">
+<label>Confirm Password</label>
+<input
+    id="confirm_password"
+    type="password"
+    placeholder="Repeat password"
+    required
+>
+</div>
+
+<button id="registerButton" type="submit">
+Create Account
+</button>
+
+</form>
+
+<div class="login">
+Already have an account?
+<a href="login.html">Sign In</a>
+</div>
+
+</div>
+
+<div class="brand">
+OrderOps AI • Autonomous Order Operations
+</div>
+
+</div>
+
+<script src="js/api.js"></script>
+
+<script>
+
+const form =
+document.getElementById("registerForm");
+
+const errorBox =
+document.getElementById("errorBox");
+
+const button =
+document.getElementById("registerButton");
+
+
+form.addEventListener("submit", async function(e){
+
+e.preventDefault();
+
+errorBox.style.display="none";
+
+
+if(
+password.value !==
+confirm_password.value
+){
+
+errorBox.textContent =
+"Passwords do not match.";
+
+errorBox.style.display="block";
+
+return;
+}
+
+
+button.disabled=true;
+
+button.textContent=
+"Creating account...";
+
+
+try{
+
+const response =
+await apiFetch(
+"/api/auth/register",
+{
+method:"POST",
+
+body:{
+full_name:
+full_name.value.trim(),
+
+email:
+email.value.trim().toLowerCase(),
+
+password:
+password.value
+}
+}
+);
+
+
+localStorage.setItem(
+"access_token",
+response.access_token
+);
+
+
+localStorage.setItem(
+"orderops_user",
+JSON.stringify(
+response.user || {}
+)
+);
+
+
+window.location.href=
+"dashboard.html";
+
+
+}catch(error){
+
+errorBox.textContent=
+error.message ||
+"Unable to create account.";
+
+errorBox.style.display=
+"block";
+
+button.disabled=false;
+
+button.textContent=
+"Create Account";
+}
+
+});
+
+</script>
+
+</body>
+</html>

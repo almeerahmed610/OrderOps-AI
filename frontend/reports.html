@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Reports | OrderOps AI</title>
+
+<link
+    rel="stylesheet"
+    href="css/app.css"
+>
+
+<style>
+
+    .reports-brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .reports-logo {
+        width: 52px;
+        height: 52px;
+        object-fit: contain;
+        border-radius: 10px;
+        display: none;
+        background: white;
+        border: 1px solid #e5e7eb;
+        padding: 4px;
+    }
+
+    .reports-brand-info h1 {
+        margin: 0;
+    }
+
+    .reports-brand-info .page-subtitle {
+        margin-top: 3px;
+    }
+
+    .business-payment-card {
+        margin-top: 20px;
+    }
+
+    .payment-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+    }
+
+    .payment-box {
+        padding: 16px;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        background: #f9fafb;
+        line-height: 1.7;
+        font-size: 13px;
+    }
+
+    .payment-box strong {
+        font-size: 14px;
+    }
+
+    .business-info-card {
+        margin-top: 20px;
+    }
+
+    .business-info-content {
+        display: flex;
+        align-items: flex-start;
+        gap: 18px;
+    }
+
+    .business-info-logo {
+        width: 75px;
+        height: 75px;
+        object-fit: contain;
+        border-radius: 10px;
+        display: none;
+        border: 1px solid #e5e7eb;
+        padding: 5px;
+        background: white;
+    }
+
+    .business-details h2 {
+        margin: 0 0 6px;
+        font-size: 20px;
+    }
+
+    .business-details p {
+        margin: 4px 0;
+        color: #6b7280;
+        font-size: 13px;
+    }
+
+    .business-contact {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px 18px;
+        margin-top: 10px;
+        color: #4b5563;
+        font-size: 12px;
+    }
+
+    .report-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .currency-label {
+        font-size: 10px;
+        color: #6b7280;
+        margin-top: 3px;
+    }
+
+    @media (max-width: 800px) {
+
+        .payment-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .business-info-content {
+            flex-direction: column;
+        }
+
+        .reports-brand {
+            align-items: flex-start;
+        }
+
+    }
+
+    @media print {
+
+        @page {
+            size: A4 landscape;
+            margin: 10mm;
+        }
+
+        .sidebar,
+        .topbar button,
+        .business-payment-card {
+            display: none !important;
+        }
+
+        .main {
+            margin: 0 !important;
+            width: 100% !important;
+        }
+
+        body {
+            background: white !important;
+        }
+
+        .card,
+        .business-info-card {
+            box-shadow: none !important;
+        }
+
+    }
+
+</style>
+
+</head>
+
+<body>
+
+<!-- =====================================================
+     SIDEBAR
+===================================================== -->
+
+<aside class="sidebar">
+
+    <div class="logo">
+        Order<span>Ops</span> AI
+    </div>
+
+    <a
+        class="nav-link"
+        href="dashboard.html"
+    >
+        📊 Dashboard
+    </a>
+
+    <a
+        class="nav-link"
+        href="customers.html"
+    >
+        👥 Customers
+    </a>
+
+    <a
+        class="nav-link"
+        href="products.html"
+    >
+        📦 Products
+    </a>
+
+    <a
+        class="nav-link"
+        href="orders.html"
+    >
+        🧾 Orders
+    </a>
+
+    <a
+        class="nav-link"
+        href="review-queue.html"
+    >
+        ⚠️ Review Queue
+    </a>
+
+    <a
+        class="nav-link"
+        href="ai-agents.html"
+    >
+        🤖 AI Agents
+    </a>
+
+    <a
+        class="nav-link active"
+        href="reports.html"
+    >
+        📈 Reports
+    </a>
+
+    <a
+        class="nav-link"
+        href="settings.html"
+    >
+        ⚙️ Settings
+    </a>
+
+    <a
+        class="nav-link"
+        href="#"
+        onclick="logout(); return false;"
+    >
+        🚪 Logout
+    </a>
+
+</aside>
+
+
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
+<main class="main">
+
+    <!-- TOPBAR -->
+
+    <div class="topbar">
+
+        <div class="reports-brand">
+
+            <img
+                id="reportsLogo"
+                class="reports-logo"
+                alt="Business Logo"
+            >
+
+            <div class="reports-brand-info">
+
+                <h1
+                    id="reportsBusinessName"
+                    class="page-title"
+                >
+                    OrderOps AI
+                </h1>
+
+                <div
+                    id="reportsSubtitle"
+                    class="page-subtitle"
+                >
+                    Order and AI operations reports
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="report-actions">
+
+            <button
+                class="btn"
+                onclick="openPrintReport()"
+            >
+                🖨 Print Report
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         BUSINESS INFORMATION
+    ================================================== -->
+
+    <div class="card business-info-card">
+
+        <div class="business-info-content">
+
+            <img
+                id="businessInfoLogo"
+                class="business-info-logo"
+                alt="Business Logo"
+            >
+
+            <div class="business-details">
+
+                <h2 id="businessName">
+                    OrderOps AI
+                </h2>
+
+                <p id="businessDescription">
+                    Autonomous Order Operations powered by AI agents.
+                </p>
+
+                <div
+                    id="businessContact"
+                    class="business-contact"
+                ></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         SUMMARY
+    ================================================== -->
+
+    <div
+        id="summary"
+        class="grid"
+    ></div>
+
+
+    <!-- =================================================
+         ORDER REPORT
+    ================================================== -->
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <h2 class="card-title">
+                Order Report
+            </h2>
+
+        </div>
+
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Order
+                        </th>
+
+                        <th>
+                            Date
+                        </th>
+
+                        <th>
+                            Customer
+                        </th>
+
+                        <th>
+                            Amount
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                        <th>
+                            Risk
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="rows"></tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         PAYMENT DETAILS
+    ================================================== -->
+
+    <div
+        id="paymentCard"
+        class="card business-payment-card"
+        style="display:none;"
+    >
+
+        <div class="card-header">
+
+            <h2 class="card-title">
+                Business Payment Details
+            </h2>
+
+        </div>
+
+        <div class="payment-grid">
+
+            <div
+                id="bankBox"
+                class="payment-box"
+            ></div>
+
+            <div
+                id="jazzcashBox"
+                class="payment-box"
+            ></div>
+
+        </div>
+
+    </div>
+
+</main>
+
+
+<!-- =====================================================
+     API
+===================================================== -->
+
+<script src="js/api.js"></script>
+
+
+<script>
+
+/* =========================================================
+   SETTINGS
+========================================================= */
+
+const SETTINGS_KEY = "orderops_settings";
+
+
+const DEFAULT_SETTINGS = {
+
+    workspaceName:
+        "OrderOps AI",
+
+    currency:
+        "PKR",
+
+    phone:
+        "",
+
+    email:
+        "",
+
+    address:
+        "",
+
+    description:
+        "Autonomous Order Operations powered by AI agents.",
+
+    bankName:
+        "",
+
+    accountTitle:
+        "",
+
+    accountNumber:
+        "",
+
+    jazzcash:
+        "",
+
+    logo:
+        ""
+
+};
+
+
+/* =========================================================
+   LOAD SETTINGS
+========================================================= */
+
+function getSettings() {
+
+    try {
+
+        const saved =
+            localStorage.getItem(
+                SETTINGS_KEY
+            );
+
+
+        if (!saved) {
+
+            return {
+                ...DEFAULT_SETTINGS
+            };
+
+        }
+
+
+        const parsed =
+            JSON.parse(saved);
+
+
+        if (
+            !parsed ||
+            typeof parsed !== "object"
+        ) {
+
+            return {
+                ...DEFAULT_SETTINGS
+            };
+
+        }
+
+
+        return {
+            ...DEFAULT_SETTINGS,
+            ...parsed
+        };
+
+    }
+
+    catch(error) {
+
+        console.error(
+            "Settings loading error:",
+            error
+        );
+
+
+        return {
+            ...DEFAULT_SETTINGS
+        };
+
+    }
+
+}
+
+
+/* =========================================================
+   SETTINGS ALIAS SUPPORT
+========================================================= */
+
+function normalizeSettings(settings) {
+
+    const result = {
+        ...DEFAULT_SETTINGS,
+        ...settings
+    };
+
+
+    if (
+        !result.workspaceName
+    ) {
+
+        result.workspaceName =
+            result.companyName ||
+            result.businessName ||
+            result.shopName ||
+            "OrderOps AI";
+
+    }
+
+
+    if (
+        !result.phone
+    ) {
+
+        result.phone =
+            result.phoneNumber ||
+            result.businessPhone ||
+            "";
+
+    }
+
+
+    if (
+        !result.email
+    ) {
+
+        result.email =
+            result.businessEmail ||
+            "";
+
+    }
+
+
+    if (
+        !result.address
+    ) {
+
+        result.address =
+            result.businessAddress ||
+            "";
+
+    }
+
+
+    if (
+        !result.description
+    ) {
+
+        result.description =
+            result.businessDescription ||
+            "";
+
+    }
+
+
+    if (
+        !result.bankName
+    ) {
+
+        result.bankName =
+            result.bank_name ||
+            "";
+
+    }
+
+
+    if (
+        !result.accountTitle
+    ) {
+
+        result.accountTitle =
+            result.account_title ||
+            "";
+
+    }
+
+
+    if (
+        !result.accountNumber
+    ) {
+
+        result.accountNumber =
+            result.account_number ||
+            result.iban ||
+            "";
+
+    }
+
+
+    if (
+        !result.jazzcash
+    ) {
+
+        result.jazzcash =
+            result.jazzCash ||
+            result.jazzcashNumber ||
+            "";
+
+    }
+
+
+    return result;
+
+}
+
+
+/* =========================================================
+   APPLY SETTINGS TO REPORT PAGE
+========================================================= */
+
+function applySettings() {
+
+    const settings =
+        normalizeSettings(
+            getSettings()
+        );
+
+
+    console.log(
+        "Reports page settings:",
+        settings
+    );
+
+
+    /* BUSINESS NAME */
+
+    const businessName =
+        settings.workspaceName ||
+        "OrderOps AI";
+
+
+    document.getElementById(
+        "reportsBusinessName"
+    ).textContent =
+        businessName;
+
+
+    document.getElementById(
+        "businessName"
+    ).textContent =
+        businessName;
+
+
+    /* DESCRIPTION */
+
+    document.getElementById(
+        "reportsSubtitle"
+    ).textContent =
+        settings.description ||
+        "Order and AI operations reports";
+
+
+    document.getElementById(
+        "businessDescription"
+    ).textContent =
+        settings.description ||
+        "";
+
+
+    /* LOGO */
+
+    const topLogo =
+        document.getElementById(
+            "reportsLogo"
+        );
+
+
+    const businessLogo =
+        document.getElementById(
+            "businessInfoLogo"
+        );
+
+
+    if (
+        settings.logo &&
+        String(settings.logo).trim() !== ""
+    ) {
+
+        topLogo.src =
+            settings.logo;
+
+        topLogo.style.display =
+            "block";
+
+
+        businessLogo.src =
+            settings.logo;
+
+        businessLogo.style.display =
+            "block";
+
+    }
+
+    else {
+
+        topLogo.removeAttribute(
+            "src"
+        );
+
+        topLogo.style.display =
+            "none";
+
+
+        businessLogo.removeAttribute(
+            "src"
+        );
+
+        businessLogo.style.display =
+            "none";
+
+    }
+
+
+    /* CONTACT */
+
+    const contact =
+        document.getElementById(
+            "businessContact"
+        );
+
+
+    let contactHTML = "";
+
+
+    if (settings.phone) {
+
+        contactHTML += `
+            <span>
+                📞 ${escapeHtml(
+                    settings.phone
+                )}
+            </span>
+        `;
+
+    }
+
+
+    if (settings.email) {
+
+        contactHTML += `
+            <span>
+                ✉ ${escapeHtml(
+                    settings.email
+                )}
+            </span>
+        `;
+
+    }
+
+
+    if (settings.address) {
+
+        contactHTML += `
+            <span>
+                📍 ${escapeHtml(
+                    settings.address
+                )}
+            </span>
+        `;
+
+    }
+
+
+    contact.innerHTML =
+        contactHTML;
+
+
+    /* PAYMENT CARD */
+
+    const paymentCard =
+        document.getElementById(
+            "paymentCard"
+        );
+
+
+    const bankBox =
+        document.getElementById(
+            "bankBox"
+        );
+
+
+    const jazzcashBox =
+        document.getElementById(
+            "jazzcashBox"
+        );
+
+
+    const hasBank =
+        Boolean(
+            settings.bankName ||
+            settings.accountTitle ||
+            settings.accountNumber
+        );
+
+
+    const hasJazzCash =
+        Boolean(
+            settings.jazzcash
+        );
+
+
+    if (
+        !hasBank &&
+        !hasJazzCash
+    ) {
+
+        paymentCard.style.display =
+            "none";
+
+    }
+
+    else {
+
+        paymentCard.style.display =
+            "block";
+
+    }
+
+
+    /* BANK */
+
+    if (hasBank) {
+
+        bankBox.style.display =
+            "block";
+
+
+        bankBox.innerHTML = `
+
+            <strong>
+                🏦 Bank Account
+            </strong>
+
+            <br><br>
+
+            ${
+                settings.bankName
+                    ? `
+                        <b>Bank:</b>
+                        ${escapeHtml(
+                            settings.bankName
+                        )}
+                        <br>
+                    `
+                    : ""
+            }
+
+            ${
+                settings.accountTitle
+                    ? `
+                        <b>Account Title:</b>
+                        ${escapeHtml(
+                            settings.accountTitle
+                        )}
+                        <br>
+                    `
+                    : ""
+            }
+
+            ${
+                settings.accountNumber
+                    ? `
+                        <b>Account / IBAN:</b>
+                        ${escapeHtml(
+                            settings.accountNumber
+                        )}
+                    `
+                    : ""
+            }
+
+        `;
+
+    }
+
+    else {
+
+        bankBox.style.display =
+            "none";
+
+        bankBox.innerHTML =
+            "";
+
+    }
+
+
+    /* JAZZCASH */
+
+    if (hasJazzCash) {
+
+        jazzcashBox.style.display =
+            "block";
+
+
+        jazzcashBox.innerHTML = `
+
+            <strong>
+                📱 JazzCash
+            </strong>
+
+            <br><br>
+
+            <b>Number:</b>
+            ${escapeHtml(
+                settings.jazzcash
+            )}
+
+        `;
+
+    }
+
+    else {
+
+        jazzcashBox.style.display =
+            "none";
+
+        jazzcashBox.innerHTML =
+            "";
+
+    }
+
+}
+
+
+/* =========================================================
+   CURRENCY
+========================================================= */
+
+function money(value) {
+
+    const settings =
+        normalizeSettings(
+            getSettings()
+        );
+
+
+    const amount =
+        Number(
+            value || 0
+        );
+
+
+    const currency =
+        String(
+            settings.currency || "PKR"
+        ).toUpperCase();
+
+
+    if (
+        currency === "USD"
+    ) {
+
+        return (
+            "$" +
+            amount.toLocaleString(
+                "en-US",
+                {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }
+            )
+        );
+
+    }
+
+
+    if (
+        currency === "EUR"
+    ) {
+
+        return (
+            "€" +
+            amount.toLocaleString(
+                "en-US",
+                {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }
+            )
+        );
+
+    }
+
+
+    return (
+        "Rs. " +
+        amount.toLocaleString(
+            "en-PK",
+            {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }
+        )
+    );
+
+}
+
+
+/* =========================================================
+   OPEN PROFESSIONAL PRINT REPORT
+========================================================= */
+
+function openPrintReport() {
+
+    window.open(
+        "print/report-print.html",
+        "_blank"
+    );
+
+}
+
+
+/* =========================================================
+   LOAD REPORT
+========================================================= */
+
+async function loadReport() {
+
+    try {
+
+        /*
+         * Apply Settings FIRST
+         */
+
+        applySettings();
+
+
+        /*
+         * Load Orders
+         */
+
+        const orders =
+            await apiFetch(
+                "/api/orders/"
+            );
+
+
+        const revenue =
+            orders.reduce(
+                (
+                    sum,
+                    order
+                ) =>
+                    sum +
+                    Number(
+                        order.total_amount || 0
+                    ),
+                0
+            );
+
+
+        const recovered =
+            orders.reduce(
+                (
+                    sum,
+                    order
+                ) =>
+                    sum +
+                    Number(
+                        order.recovered_amount || 0
+                    ),
+                0
+            );
+
+
+        const refunds =
+            orders.reduce(
+                (
+                    sum,
+                    order
+                ) =>
+                    sum +
+                    Number(
+                        order.refund_amount || 0
+                    ),
+                0
+            );
+
+
+        /*
+         * SUMMARY
+         */
+
+        document.getElementById(
+            "summary"
+        ).innerHTML = [
+
+            [
+                "Total Orders",
+                orders.length
+            ],
+
+            [
+                "Total Revenue",
+                money(revenue)
+            ],
+
+            [
+                "Recovered",
+                money(recovered)
+            ],
+
+            [
+                "Refunds",
+                money(refunds)
+            ]
+
+        ].map(
+            item => `
+
+                <div class="stat-card">
+
+                    <div class="stat-label">
+                        ${item[0]}
+                    </div>
+
+                    <div class="stat-value">
+                        ${item[1]}
+                    </div>
+
+                </div>
+
+            `
+        ).join("");
+
+
+        /*
+         * TABLE
+         */
+
+        document.getElementById(
+            "rows"
+        ).innerHTML = orders.length
+
+            ?
+
+            orders.map(
+                order => `
+
+                    <tr>
+
+                        <td>
+                            ${escapeHtml(
+                                order.order_number
+                            )}
+                        </td>
+
+                        <td>
+                            ${formatDate(
+                                order.created_at
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHtml(
+                                order.customer_name ||
+                                "Unknown Customer"
+                            )}
+                        </td>
+
+                        <td>
+                            ${money(
+                                order.total_amount
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHtml(
+                                order.status ||
+                                "-"
+                            )}
+                        </td>
+
+                        <td>
+
+                            ${
+                                order.risk_score ??
+                                0
+                            }
+
+                            /
+
+                            ${escapeHtml(
+                                order.risk_level ||
+                                "low"
+                            )}
+
+                        </td>
+
+                    </tr>
+
+                `
+            ).join("")
+
+            :
+
+            `
+
+                <tr>
+
+                    <td
+                        colspan="6"
+                        class="empty"
+                    >
+                        No report data.
+                    </td>
+
+                </tr>
+
+            `;
+
+    }
+
+    catch(error) {
+
+        console.error(
+            "Reports error:",
+            error
+        );
+
+
+        alert(
+            error.message
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   DATE
+========================================================= */
+
+function formatDate(
+    value
+) {
+
+    if (!value) {
+
+        return "-";
+
+    }
+
+
+    const date =
+        new Date(value);
+
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+
+        return value;
+
+    }
+
+
+    return date.toLocaleDateString(
+        "en-PK",
+        {
+            year: "numeric",
+            month: "short",
+            day: "numeric"
+        }
+    );
+
+}
+
+
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
+
+function escapeHtml(
+    value
+) {
+
+    return String(
+        value ?? ""
+    )
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+/* =========================================================
+   REFRESH WHEN SETTINGS CHANGE
+========================================================= */
+
+window.addEventListener(
+    "storage",
+    function(event) {
+
+        if (
+            event.key ===
+            SETTINGS_KEY
+        ) {
+
+            applySettings();
+
+            loadReport();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   START
+========================================================= */
+
+if (
+    requireAuth()
+) {
+
+    loadReport();
+
+}
+
+</script>
+
+</body>
+
+</html>

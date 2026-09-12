@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Review Queue | OrderOps AI</title>
+
+<link rel="stylesheet"
+href="css/app.css">
+
+</head>
+
+<body>
+
+<aside class="sidebar">
+
+<div class="logo">
+Order<span>Ops</span> AI
+</div>
+
+<a class="nav-link"
+href="dashboard.html">
+📊 Dashboard
+</a>
+
+<a class="nav-link"
+href="customers.html">
+👥 Customers
+</a>
+
+<a class="nav-link"
+href="products.html">
+📦 Products
+</a>
+
+<a class="nav-link"
+href="orders.html">
+🧾 Orders
+</a>
+
+<a class="nav-link active"
+href="review-queue.html">
+⚠️ Review Queue
+</a>
+
+<a class="nav-link"
+href="ai-agents.html">
+🤖 AI Agents
+</a>
+
+<a class="nav-link"
+href="reports.html">
+📈 Reports
+</a>
+
+<a class="nav-link"
+href="settings.html">
+⚙️ Settings
+</a>
+
+<a class="nav-link"
+href="#"
+onclick="logout();return false;">
+🚪 Logout
+</a>
+
+</aside>
+
+
+<main class="main">
+
+<div class="topbar">
+
+<div>
+
+<h1 class="page-title">
+Review Queue
+</h1>
+
+<div class="page-subtitle">
+Orders requiring operational attention
+</div>
+
+</div>
+
+<button
+class="btn"
+onclick="loadQueue()">
+
+Refresh Queue
+
+</button>
+
+</div>
+
+
+<div class="grid">
+
+<div class="stat-card">
+
+<div class="stat-label">
+High Risk
+</div>
+
+<div
+id="highRisk"
+class="stat-value">
+
+0
+
+</div>
+
+</div>
+
+
+<div class="stat-card">
+
+<div class="stat-label">
+Manual Review
+</div>
+
+<div
+id="manual"
+class="stat-value">
+
+0
+
+</div>
+
+</div>
+
+
+<div class="stat-card">
+
+<div class="stat-label">
+Inventory Review
+</div>
+
+<div
+id="inventory"
+class="stat-value">
+
+0
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="card">
+
+<div class="table-wrapper">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Order</th>
+<th>Customer</th>
+<th>Amount</th>
+<th>Risk</th>
+<th>Status</th>
+<th>Action</th>
+
+</tr>
+
+</thead>
+
+<tbody id="rows"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</main>
+
+
+<script src="js/api.js"></script>
+
+<script>
+
+async function loadQueue() {
+
+    try {
+
+        const orders =
+            await apiFetch(
+                "/api/orders/"
+            );
+
+
+        const queue =
+            orders.filter(order =>
+
+                [
+                    "review",
+                    "manual_review",
+                    "inventory_review"
+                ].includes(
+                    order.status
+                )
+
+                ||
+
+                order.risk_level === "high"
+
+            );
+
+
+        document.getElementById(
+            "highRisk"
+        ).textContent = orders.filter(
+            x => x.risk_level === "high"
+        ).length;
+
+
+        document.getElementById(
+            "manual"
+        ).textContent = orders.filter(
+            x =>
+                [
+                    "review",
+                    "manual_review"
+                ].includes(x.status)
+        ).length;
+
+
+        document.getElementById(
+            "inventory"
+        ).textContent = orders.filter(
+            x =>
+                x.status ===
+                "inventory_review"
+        ).length;
+
+
+        document.getElementById(
+            "rows"
+        ).innerHTML = queue.length
+
+            ? queue.map(order => `
+
+                <tr>
+
+                    <td>
+                        ${escapeHtml(
+                            order.order_number
+                        )}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(
+                            order.customer_name
+                        )}
+                    </td>
+
+                    <td>
+                        ${money(
+                            order.total_amount
+                        )}
+                    </td>
+
+                    <td>
+
+                        <span class="badge badge-red">
+
+                        ${order.risk_score}
+                        /
+                        ${order.risk_level}
+
+                        </span>
+
+                    </td>
+
+                    <td>
+                        ${escapeHtml(
+                            order.status
+                        )}
+                    </td>
+
+                    <td>
+
+                        <button
+                        class="btn"
+                        onclick="processOrder(${order.id})">
+
+                        Recheck AI
+
+                        </button>
+
+                    </td>
+
+                </tr>
+
+            `).join("")
+
+            :
+
+            `
+                <tr>
+
+                    <td
+                    colspan="6"
+                    class="empty">
+
+                    🎉 Review queue is clear.
+
+                    </td>
+
+                </tr>
+            `;
+
+    }
+
+    catch(error) {
+
+        alert(error.message);
+
+    }
+
+}
+
+
+async function processOrder(id) {
+
+    try {
+
+        await apiFetch(
+            `/api/agents/orders/${id}/process`,
+            {
+                method: "POST"
+            }
+        );
+
+        loadQueue();
+
+    }
+
+    catch(error) {
+
+        alert(error.message);
+
+    }
+
+}
+
+
+if (requireAuth()) {
+    loadQueue();
+}
+
+</script>
+
+</body>
+</html>

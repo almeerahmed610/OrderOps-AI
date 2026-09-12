@@ -1,0 +1,2923 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>AI Business Assistant | OrderOps AI</title>
+
+<link rel="stylesheet"
+href="css/app.css">
+
+<style>
+
+/* =========================================================
+   AI ASSISTANT PAGE
+========================================================= */
+
+.ai-page {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 48px);
+    min-height: 650px;
+}
+
+.ai-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.ai-header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.ai-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    box-shadow: 0 8px 25px rgba(37, 99, 235, 0.25);
+}
+
+.ai-title {
+    margin: 0;
+    font-size: 26px;
+    font-weight: 700;
+}
+
+.ai-subtitle {
+    margin-top: 4px;
+    color: #64748b;
+    font-size: 14px;
+}
+
+.ai-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 13px;
+    border-radius: 20px;
+    background: #ecfdf5;
+    color: #047857;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.ai-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #10b981;
+}
+
+
+/* =========================================================
+   QUICK ACTIONS
+========================================================= */
+
+.quick-actions {
+    display: flex;
+    gap: 9px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+
+.quick-btn {
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    color: #334155;
+    border-radius: 9px;
+    padding: 9px 13px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.quick-btn:hover {
+    border-color: #2563eb;
+    color: #2563eb;
+    background: #eff6ff;
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   CHAT CARD
+========================================================= */
+
+.ai-chat-card {
+    flex: 1;
+    min-height: 0;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 5px 25px rgba(15, 23, 42, 0.06);
+}
+
+.chat-top {
+    padding: 15px 20px;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.chat-top-title {
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.chat-top-subtitle {
+    font-size: 12px;
+    color: #64748b;
+    margin-top: 3px;
+}
+
+.clear-chat {
+    border: none;
+    background: #f8fafc;
+    color: #64748b;
+    padding: 7px 11px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.clear-chat:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+}
+
+
+/* =========================================================
+   MESSAGES
+========================================================= */
+
+.chat-messages {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 24px;
+    background:
+        radial-gradient(
+            circle at top right,
+            rgba(37, 99, 235, 0.04),
+            transparent 35%
+        ),
+        #f8fafc;
+}
+
+.message {
+    display: flex;
+    margin-bottom: 18px;
+}
+
+.message.user {
+    justify-content: flex-end;
+}
+
+.message.ai {
+    justify-content: flex-start;
+}
+
+.message-bubble {
+    max-width: 90%;
+    border-radius: 14px;
+    padding: 14px 16px;
+    line-height: 1.55;
+    font-size: 14px;
+}
+
+.message.user .message-bubble {
+    background: #2563eb;
+    color: white;
+    border-bottom-right-radius: 4px;
+}
+
+.message.ai .message-bubble {
+    background: white;
+    color: #334155;
+    border: 1px solid #e2e8f0;
+    border-bottom-left-radius: 4px;
+    box-shadow: 0 3px 12px rgba(15, 23, 42, 0.04);
+}
+
+
+/* =========================================================
+   WELCOME
+========================================================= */
+
+.welcome-box {
+    max-width: 760px;
+    margin: 25px auto;
+    text-align: center;
+}
+
+.welcome-icon {
+    width: 66px;
+    height: 66px;
+    margin: auto;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 31px;
+    box-shadow: 0 12px 35px rgba(37, 99, 235, 0.22);
+}
+
+.welcome-box h2 {
+    margin: 16px 0 7px;
+    color: #0f172a;
+}
+
+.welcome-box p {
+    margin: 0 auto;
+    max-width: 600px;
+    color: #64748b;
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   REPORT
+========================================================= */
+
+.report {
+    min-width: 0;
+}
+
+.report-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 5px;
+}
+
+.report-subtitle {
+    color: #64748b;
+    font-size: 12px;
+    margin-bottom: 16px;
+}
+
+.report-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(auto-fit, minmax(135px, 1fr));
+    gap: 9px;
+    margin-bottom: 16px;
+}
+
+.report-stat {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 11px;
+}
+
+.report-stat-label {
+    font-size: 11px;
+    color: #64748b;
+    margin-bottom: 5px;
+}
+
+.report-stat-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.report-section {
+    margin-top: 15px;
+}
+
+.report-section-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 9px;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(auto-fit, minmax(180px, 1fr));
+    gap: 8px;
+}
+
+.info-item {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 9px 11px;
+}
+
+.info-label {
+    color: #64748b;
+    font-size: 11px;
+}
+
+.info-value {
+    color: #0f172a;
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 3px;
+}
+
+.ai-summary {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 10px;
+    padding: 12px;
+    color: #1e3a8a;
+    font-size: 13px;
+    line-height: 1.55;
+}
+
+.report-table-wrapper {
+    overflow-x: auto;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+}
+
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 750px;
+    font-size: 12px;
+}
+
+.report-table th {
+    text-align: left;
+    padding: 9px 10px;
+    background: #f8fafc;
+    color: #64748b;
+    font-size: 11px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.report-table td {
+    padding: 10px;
+    border-bottom: 1px solid #f1f5f9;
+    color: #334155;
+}
+
+.report-table tr:last-child td {
+    border-bottom: none;
+}
+
+.status-badge {
+    display: inline-flex;
+    padding: 4px 7px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.status-good {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.status-warning {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status-danger {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.status-neutral {
+    background: #e2e8f0;
+    color: #475569;
+}
+
+
+/* =========================================================
+   TYPING
+========================================================= */
+
+.typing {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.typing span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #94a3b8;
+    animation: typing 1.2s infinite;
+}
+
+.typing span:nth-child(2) {
+    animation-delay: 0.15s;
+}
+
+.typing span:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+@keyframes typing {
+
+    0%, 60%, 100% {
+        opacity: 0.35;
+        transform: translateY(0);
+    }
+
+    30% {
+        opacity: 1;
+        transform: translateY(-3px);
+    }
+
+}
+
+
+/* =========================================================
+   INPUT
+========================================================= */
+
+.chat-input-area {
+    padding: 14px;
+    border-top: 1px solid #e2e8f0;
+    background: #ffffff;
+}
+
+.chat-form {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.chat-input {
+    flex: 1;
+    min-width: 0;
+    height: 46px;
+    border: 1px solid #cbd5e1;
+    border-radius: 11px;
+    padding: 0 14px;
+    outline: none;
+    font-size: 14px;
+    color: #0f172a;
+    background: #f8fafc;
+}
+
+.chat-input:focus {
+    border-color: #2563eb;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+}
+
+.send-btn {
+    height: 46px;
+    min-width: 90px;
+    border: none;
+    border-radius: 11px;
+    background: #2563eb;
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.send-btn:hover {
+    background: #1d4ed8;
+}
+
+.send-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.input-hint {
+    margin-top: 7px;
+    padding-left: 3px;
+    color: #94a3b8;
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   SIDEBAR SAFETY
+   =========================================================
+   Ye styles ensure karte hain ke navigator visible rahe
+   agar app.css mein sidebar styling incomplete ho.
+========================================================= */
+
+.sidebar {
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar .nav-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.sidebar .nav-link.active {
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .ai-header {
+        align-items: flex-start;
+    }
+
+    .ai-status {
+        display: none;
+    }
+
+    .message-bubble {
+        max-width: 94%;
+    }
+
+}
+
+@media (max-width: 650px) {
+
+    .ai-page {
+        height: calc(100vh - 20px);
+        min-height: 600px;
+    }
+
+    .ai-header {
+        margin-bottom: 12px;
+    }
+
+    .ai-icon {
+        width: 44px;
+        height: 44px;
+        font-size: 22px;
+    }
+
+    .ai-title {
+        font-size: 21px;
+    }
+
+    .quick-actions {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 4px;
+    }
+
+    .quick-btn {
+        flex: 0 0 auto;
+    }
+
+    .chat-messages {
+        padding: 15px;
+    }
+
+    .chat-input-area {
+        padding: 10px;
+    }
+
+    .send-btn {
+        min-width: 65px;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =======================================================
+     SIDEBAR / NAVIGATOR
+======================================================= -->
+
+<aside class="sidebar">
+
+    <div class="logo">
+        Order<span>Ops</span> AI
+    </div>
+
+
+    <a class="nav-link"
+       href="dashboard.html">
+        📊 Dashboard
+    </a>
+
+
+    <a class="nav-link"
+       href="customers.html">
+        👥 Customers
+    </a>
+
+
+    <a class="nav-link"
+       href="products.html">
+        📦 Products
+    </a>
+
+
+    <a class="nav-link"
+       href="orders.html">
+        🧾 Orders
+    </a>
+
+
+    <a class="nav-link"
+       href="review-queue.html">
+        ⚠️ Review Queue
+    </a>
+
+
+    <a class="nav-link active"
+       href="ai-agents.html">
+        🤖 AI Agents
+    </a>
+
+
+    <a class="nav-link"
+       href="reports.html">
+        📈 Reports
+    </a>
+
+
+    <a class="nav-link"
+       href="settings.html">
+        ⚙️ Settings
+    </a>
+
+
+    <a class="nav-link"
+       href="#"
+       onclick="logout(); return false;">
+        🚪 Logout
+    </a>
+
+</aside>
+
+
+
+<!-- =======================================================
+     MAIN
+======================================================= -->
+
+<main class="main">
+
+<div class="ai-page">
+
+
+    <!-- HEADER -->
+
+    <div class="ai-header">
+
+        <div class="ai-header-left">
+
+            <div class="ai-icon">
+                🤖
+            </div>
+
+            <div>
+
+                <h1 class="ai-title">
+                    AI Business Assistant
+                </h1>
+
+                <div class="ai-subtitle">
+                    Ask questions about your real OrderOps business data
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="ai-status">
+
+            <span class="ai-status-dot"></span>
+
+            AI Online
+
+        </div>
+
+    </div>
+
+
+
+    <!-- QUICK ACTIONS -->
+
+    <div class="quick-actions">
+
+        <button
+            class="quick-btn"
+            onclick="askQuick('business summary')">
+
+            📊 Business Summary
+
+        </button>
+
+
+        <button
+            class="quick-btn"
+            onclick="askQuick('today')">
+
+            📅 Today
+
+        </button>
+
+
+        <button
+            class="quick-btn"
+            onclick="askQuick('today sales')">
+
+            💰 Today's Sales
+
+        </button>
+
+
+        <button
+            class="quick-btn"
+            onclick="askQuick('today orders')">
+
+            🧾 Today's Orders
+
+        </button>
+
+
+        <button
+            class="quick-btn"
+            onclick="askQuick('pending orders')">
+
+            ⏳ Pending Orders
+
+        </button>
+
+
+        <button
+            class="quick-btn"
+            onclick="askQuick('high risk orders')">
+
+            🔴 High Risk
+
+        </button>
+
+
+        <button
+            class="quick-btn"
+            onclick="askQuick('inventory')">
+
+            📦 Inventory
+
+        </button>
+
+    </div>
+
+
+
+    <!-- CHAT -->
+
+    <div class="ai-chat-card">
+
+
+        <div class="chat-top">
+
+            <div>
+
+                <div class="chat-top-title">
+                    Business Intelligence
+                </div>
+
+                <div class="chat-top-subtitle">
+                    Customer, order, sales, risk and inventory insights
+                </div>
+
+            </div>
+
+
+            <button
+                class="clear-chat"
+                onclick="clearChat()">
+
+                Clear Chat
+
+            </button>
+
+        </div>
+
+
+
+        <!-- MESSAGES -->
+
+        <div
+            id="chatMessages"
+            class="chat-messages">
+
+
+            <div class="welcome-box">
+
+                <div class="welcome-icon">
+                    🤖
+                </div>
+
+                <h2>
+                    How can I help you?
+                </h2>
+
+                <p>
+                    I can analyze your actual OrderOps database and
+                    provide customer, order, sales, risk and inventory
+                    reports.
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- INPUT -->
+
+        <div class="chat-input-area">
+
+            <form
+                id="chatForm"
+                class="chat-form">
+
+                <input
+                    id="chatInput"
+                    class="chat-input"
+                    type="text"
+                    autocomplete="off"
+                    placeholder="Ask something like: 25, today sales, pending orders...">
+
+                <button
+                    id="sendBtn"
+                    class="send-btn"
+                    type="submit">
+
+                    Send
+
+                </button>
+
+            </form>
+
+
+            <div class="input-hint">
+
+                Try:
+                <strong>25</strong>
+                ·
+                <strong>25 details</strong>
+                ·
+                <strong>25 orders</strong>
+                ·
+                <strong>today sales</strong>
+                ·
+                <strong>inventory</strong>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</main>
+
+
+
+<script src="js/api.js"></script>
+
+
+<script>
+
+/* =========================================================
+   AUTH
+========================================================= */
+
+if (!requireAuth()) {
+    // api.js handles redirect
+}
+
+
+/* =========================================================
+   ELEMENTS
+========================================================= */
+
+const chatMessages =
+    document.getElementById("chatMessages");
+
+const chatInput =
+    document.getElementById("chatInput");
+
+const chatForm =
+    document.getElementById("chatForm");
+
+const sendBtn =
+    document.getElementById("sendBtn");
+
+
+/* =========================================================
+   HTML ESCAPE
+========================================================= */
+
+function escapeHtml(value) {
+
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+/* =========================================================
+   MONEY
+========================================================= */
+
+function formatMoney(value) {
+
+    return `Rs. ${Number(value || 0).toLocaleString(
+        "en-PK",
+        {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }
+    )}`;
+
+}
+
+
+/* =========================================================
+   DATE
+========================================================= */
+
+function formatDate(value) {
+
+    if (!value) {
+        return "-";
+    }
+
+    if (
+        typeof value === "string" &&
+        value.includes(" ")
+    ) {
+        return escapeHtml(value);
+    }
+
+    const date =
+        new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+        return escapeHtml(value);
+    }
+
+    return date.toLocaleString(
+        "en-PK",
+        {
+            dateStyle: "medium",
+            timeStyle: "short"
+        }
+    );
+
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+function statusClass(status) {
+
+    const value =
+        String(status || "")
+        .toLowerCase();
+
+    if (
+        value.includes("high") ||
+        value.includes("cancel") ||
+        value.includes("danger") ||
+        value.includes("out_of_stock")
+    ) {
+        return "status-danger";
+    }
+
+    if (
+        value.includes("pending") ||
+        value.includes("review") ||
+        value.includes("medium") ||
+        value.includes("inventory") ||
+        value.includes("low_stock")
+    ) {
+        return "status-warning";
+    }
+
+    if (
+        value.includes("approved") ||
+        value.includes("complete") ||
+        value.includes("paid") ||
+        value.includes("low") ||
+        value.includes("ready") ||
+        value.includes("healthy") ||
+        value.includes("active")
+    ) {
+        return "status-good";
+    }
+
+    return "status-neutral";
+
+}
+
+
+function badge(value) {
+
+    return `
+        <span class="status-badge ${statusClass(value)}">
+            ${escapeHtml(value || "-")}
+        </span>
+    `;
+
+}
+
+
+/* =========================================================
+   USER MESSAGE
+========================================================= */
+
+function addUserMessage(text) {
+
+    const wrapper =
+        document.createElement("div");
+
+    wrapper.className =
+        "message user";
+
+    wrapper.innerHTML = `
+
+        <div class="message-bubble">
+
+            ${escapeHtml(text)}
+
+        </div>
+
+    `;
+
+    chatMessages.appendChild(wrapper);
+
+    scrollChat();
+
+}
+
+
+/* =========================================================
+   AI MESSAGE
+========================================================= */
+
+function addAIMessage(html) {
+
+    const wrapper =
+        document.createElement("div");
+
+    wrapper.className =
+        "message ai";
+
+    wrapper.innerHTML = `
+
+        <div class="message-bubble report">
+
+            ${html}
+
+        </div>
+
+    `;
+
+    chatMessages.appendChild(wrapper);
+
+    scrollChat();
+
+}
+
+
+/* =========================================================
+   TYPING
+========================================================= */
+
+function addTyping() {
+
+    const wrapper =
+        document.createElement("div");
+
+    wrapper.id =
+        "typingMessage";
+
+    wrapper.className =
+        "message ai";
+
+    wrapper.innerHTML = `
+
+        <div class="message-bubble">
+
+            <div class="typing">
+
+                <span></span>
+                <span></span>
+                <span></span>
+
+            </div>
+
+        </div>
+
+    `;
+
+    chatMessages.appendChild(wrapper);
+
+    scrollChat();
+
+}
+
+
+function removeTyping() {
+
+    const typing =
+        document.getElementById(
+            "typingMessage"
+        );
+
+    if (typing) {
+        typing.remove();
+    }
+
+}
+
+
+/* =========================================================
+   SCROLL
+========================================================= */
+
+function scrollChat() {
+
+    chatMessages.scrollTop =
+        chatMessages.scrollHeight;
+
+}
+
+
+/* =========================================================
+   CUSTOMER REPORT
+========================================================= */
+
+function renderCustomerReport(report) {
+
+    const customer =
+        report.customer || {};
+
+    const orders =
+        report.orders ||
+        report.orders_list ||
+        [];
+
+    const summary =
+        report.summary || {};
+
+    let ordersHtml = "";
+
+
+    if (orders.length) {
+
+        ordersHtml = `
+
+            <div class="report-section">
+
+                <div class="report-section-title">
+                    Customer Orders
+                </div>
+
+                <div class="report-table-wrapper">
+
+                    <table class="report-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Order</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Risk</th>
+                                <th>Amount</th>
+                                <th>Due</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            ${orders.map(order => `
+
+                                <tr>
+
+                                    <td>
+                                        <strong>
+                                            ${escapeHtml(
+                                                order.order_number || "-"
+                                            )}
+                                        </strong>
+                                    </td>
+
+                                    <td>
+                                        ${formatDate(
+                                            order.created_at ||
+                                            order.date
+                                        )}
+                                    </td>
+
+                                    <td>
+                                        ${badge(order.status)}
+                                    </td>
+
+                                    <td>
+                                        ${badge(
+                                            order.risk_level ||
+                                            "low"
+                                        )}
+                                    </td>
+
+                                    <td>
+                                        <strong>
+                                            ${formatMoney(
+                                                order.total_amount
+                                            )}
+                                        </strong>
+                                    </td>
+
+                                    <td>
+                                        ${formatMoney(
+                                            order.outstanding_amount
+                                        )}
+                                    </td>
+
+                                </tr>
+
+                            `).join("")}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        `;
+
+    }
+
+
+    return `
+
+        <div class="report-title">
+
+            Customer #${escapeHtml(
+                customer.id ??
+                report.customer_id ??
+                "-"
+            )}
+
+        </div>
+
+
+        <div class="report-subtitle">
+
+            Complete customer intelligence report
+
+        </div>
+
+
+        <div class="report-grid">
+
+            <div class="report-stat">
+
+                <div class="report-stat-label">
+                    Total Orders
+                </div>
+
+                <div class="report-stat-value">
+                    ${summary.total_orders ?? 0}
+                </div>
+
+            </div>
+
+
+            <div class="report-stat">
+
+                <div class="report-stat-label">
+                    Total Sales
+                </div>
+
+                <div class="report-stat-value">
+                    ${formatMoney(
+                        summary.total_sales
+                    )}
+                </div>
+
+            </div>
+
+
+            <div class="report-stat">
+
+                <div class="report-stat-label">
+                    Recovered
+                </div>
+
+                <div class="report-stat-value">
+                    ${formatMoney(
+                        summary.recovered
+                    )}
+                </div>
+
+            </div>
+
+
+            <div class="report-stat">
+
+                <div class="report-stat-label">
+                    Outstanding
+                </div>
+
+                <div class="report-stat-value">
+                    ${formatMoney(
+                        summary.outstanding
+                    )}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="report-section">
+
+            <div class="report-section-title">
+                Customer Information
+            </div>
+
+            <div class="info-grid">
+
+                <div class="info-item">
+
+                    <div class="info-label">
+                        Name
+                    </div>
+
+                    <div class="info-value">
+                        ${escapeHtml(
+                            customer.name || "-"
+                        )}
+                    </div>
+
+                </div>
+
+
+                <div class="info-item">
+
+                    <div class="info-label">
+                        Phone
+                    </div>
+
+                    <div class="info-value">
+                        ${escapeHtml(
+                            customer.phone || "-"
+                        )}
+                    </div>
+
+                </div>
+
+
+                <div class="info-item">
+
+                    <div class="info-label">
+                        Email
+                    </div>
+
+                    <div class="info-value">
+                        ${escapeHtml(
+                            customer.email || "-"
+                        )}
+                    </div>
+
+                </div>
+
+
+                <div class="info-item">
+
+                    <div class="info-label">
+                        Customer Since
+                    </div>
+
+                    <div class="info-value">
+                        ${formatDate(
+                            customer.created_at
+                        )}
+                    </div>
+
+                </div>
+
+
+                <div class="info-item">
+
+                    <div class="info-label">
+                        Address
+                    </div>
+
+                    <div class="info-value">
+                        ${escapeHtml(
+                            customer.address || "-"
+                        )}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="report-section">
+
+            <div class="report-section-title">
+                Order Status
+            </div>
+
+            <div class="info-grid">
+
+                <div class="info-item">
+                    <div class="info-label">
+                        Completed
+                    </div>
+                    <div class="info-value">
+                        ${summary.completed ?? 0}
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">
+                        Pending
+                    </div>
+                    <div class="info-value">
+                        ${summary.pending ?? 0}
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">
+                        Cancelled
+                    </div>
+                    <div class="info-value">
+                        ${summary.cancelled ?? 0}
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">
+                        High Risk
+                    </div>
+                    <div class="info-value">
+                        ${summary.high_risk ?? 0}
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        ${
+            report.ai_summary
+            ?
+            `
+            <div class="report-section">
+
+                <div class="report-section-title">
+                    AI Summary
+                </div>
+
+                <div class="ai-summary">
+
+                    🤖
+                    ${escapeHtml(
+                        report.ai_summary
+                    )}
+
+                </div>
+
+            </div>
+            `
+            :
+            ""
+        }
+
+
+        ${ordersHtml}
+
+    `;
+
+}
+
+
+/* =========================================================
+   TODAY REPORT
+========================================================= */
+
+function renderTodayReport(report) {
+
+    const sales =
+        report.sales || {};
+
+    const orders =
+        report.orders || {};
+
+    const risk =
+        report.risk || {};
+
+    const customers =
+        report.customers || {};
+
+    const topProduct =
+        report.top_product || {};
+
+    const ordersList =
+        report.orders_list || [];
+
+
+    return `
+
+        <div class="report-title">
+
+            ${escapeHtml(
+                report.title ||
+                "Today's Business Intelligence"
+            )}
+
+        </div>
+
+        <div class="report-subtitle">
+
+            ${escapeHtml(
+                report.date ||
+                ""
+            )}
+
+        </div>
+
+
+        <div class="report-grid">
+
+            <div class="report-stat">
+
+                <div class="report-stat-label">
+                    Orders
+                </div>
+
+                <div class="report-stat-value">
+                    ${orders.total ?? 0}
+                </div>
+
+            </div>
+
+
+            <div class="report-stat">
+
+                <div class="report-stat-label">
+                    Sales
+                </div>
+
+                <div class="report-stat-value">
+                    ${formatMoney(
+                        sales.total_sales
+                    )}
+                </div>
+
+            </div>
+
+
+            <div class="report-stat">
+
+                <div class="report-stat-label">
+                    Recovered
+                </div>
+
+                <div class="report-stat-value">
+                    ${formatMoney(
+                        sales.recovered
+                    )}
+                </div>
+
+            </div>
+
+
+            <div class="report-stat">
+
+                <div class="report-stat-label">
+                    Outstanding
+                </div>
+
+                <div class="report-stat-value">
+                    ${formatMoney(
+                        sales.outstanding
+                    )}
+                </div>
+
+            </div>
+
+
+            <div class="report-stat">
+
+                <div class="report-stat-label">
+                    Approved
+                </div>
+
+                <div class="report-stat-value">
+                    ${orders.approved ?? 0}
+                </div>
+
+            </div>
+
+
+            <div class="report-stat">
+
+                <div class="report-stat-label">
+                    Pending
+                </div>
+
+                <div class="report-stat-value">
+                    ${orders.pending ?? 0}
+                </div>
+
+            </div>
+
+
+            <div class="report-stat">
+
+                <div class="report-stat-label">
+                    High Risk
+                </div>
+
+                <div class="report-stat-value">
+                    ${risk.high ?? 0}
+                </div>
+
+            </div>
+
+
+            <div class="report-stat">
+
+                <div class="report-stat-label">
+                    Customers Served
+                </div>
+
+                <div class="report-stat-value">
+                    ${customers.customers_served ?? 0}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        ${
+            topProduct.name
+            ?
+            `
+            <div class="report-section">
+
+                <div class="report-section-title">
+                    Top Product
+                </div>
+
+                <div class="info-grid">
+
+                    <div class="info-item">
+
+                        <div class="info-label">
+                            Product
+                        </div>
+
+                        <div class="info-value">
+                            ${escapeHtml(
+                                topProduct.name
+                            )}
+                        </div>
+
+                    </div>
+
+
+                    <div class="info-item">
+
+                        <div class="info-label">
+                            Quantity
+                        </div>
+
+                        <div class="info-value">
+                            ${topProduct.quantity ?? 0}
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+            `
+            :
+            ""
+        }
+
+
+        ${
+            report.ai_summary
+            ?
+            `
+            <div class="report-section">
+
+                <div class="report-section-title">
+                    AI Executive Summary
+                </div>
+
+                <div class="ai-summary">
+
+                    🤖
+                    ${escapeHtml(
+                        report.ai_summary
+                    )}
+
+                </div>
+
+            </div>
+            `
+            :
+            ""
+        }
+
+
+        ${
+            ordersList.length
+            ?
+            `
+            <div class="report-section">
+
+                <div class="report-section-title">
+                    Today's Orders
+                </div>
+
+                <div class="report-table-wrapper">
+
+                    <table class="report-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Order</th>
+                                <th>Customer</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Risk</th>
+                                <th>Total</th>
+                                <th>Due</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            ${ordersList.map(order => `
+
+                                <tr>
+
+                                    <td>
+                                        <strong>
+                                            ${escapeHtml(
+                                                order.order_number ||
+                                                "-"
+                                            )}
+                                        </strong>
+                                    </td>
+
+                                    <td>
+                                        ${escapeHtml(
+                                            order.customer_name ||
+                                            `Customer #${order.customer_id || "-"}`
+                                        )}
+                                    </td>
+
+                                    <td>
+                                        ${escapeHtml(
+                                            order.date ||
+                                            "-"
+                                        )}
+                                    </td>
+
+                                    <td>
+                                        ${badge(
+                                            order.status
+                                        )}
+                                    </td>
+
+                                    <td>
+                                        ${badge(
+                                            order.risk_level ||
+                                            "low"
+                                        )}
+                                    </td>
+
+                                    <td>
+                                        <strong>
+                                            ${formatMoney(
+                                                order.total_amount
+                                            )}
+                                        </strong>
+                                    </td>
+
+                                    <td>
+                                        ${formatMoney(
+                                            order.outstanding_amount
+                                        )}
+                                    </td>
+
+                                </tr>
+
+                            `).join("")}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+            `
+            :
+            ""
+        }
+
+    `;
+
+}
+
+
+/* =========================================================
+   SALES REPORT
+========================================================= */
+
+function renderSalesReport(report) {
+
+    const sales =
+        report.sales ||
+        report.financials ||
+        report;
+
+
+    return `
+
+        <div class="report-title">
+
+            ${escapeHtml(
+                report.title ||
+                "Sales Intelligence"
+            )}
+
+        </div>
+
+
+        <div class="report-subtitle">
+            Sales and payment performance
+        </div>
+
+
+        <div class="report-grid">
+
+            <div class="report-stat">
+
+                <div class="report-stat-label">
+                    Total Sales
+                </div>
+
+                <div class="report-stat-value">
+                    ${formatMoney(
+                        sales.total_sales
+                    )}
+                </div>
+
+            </div>
+
+
+            <div class="report-stat">
+
+                <div class="report-stat-label">
+                    Recovered
+                </div>
+
+                <div class="report-stat-value">
+                    ${formatMoney(
+                        sales.recovered
+                    )}
+                </div>
+
+            </div>
+
+
+            <div class="report-stat">
+
+                <div class="report-stat-label">
+                    Outstanding
+                </div>
+
+                <div class="report-stat-value">
+                    ${formatMoney(
+                        sales.outstanding
+                    )}
+                </div>
+
+            </div>
+
+
+            <div class="report-stat">
+
+                <div class="report-stat-label">
+                    Refunds
+                </div>
+
+                <div class="report-stat-value">
+                    ${formatMoney(
+                        sales.refunds
+                    )}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        ${
+            report.ai_summary
+            ?
+            `
+            <div class="report-section">
+
+                <div class="report-section-title">
+                    AI Sales Insight
+                </div>
+
+                <div class="ai-summary">
+
+                    💰
+                    ${escapeHtml(
+                        report.ai_summary
+                    )}
+
+                </div>
+
+            </div>
+            `
+            :
+            ""
+        }
+
+    `;
+
+}
+
+
+/* =========================================================
+   ORDER LIST
+========================================================= */
+
+function renderOrderListReport(report) {
+
+    const orders =
+        report.orders_list ||
+        report.orders ||
+        [];
+
+    const total =
+        report.total ??
+        report.total_orders ??
+        orders.length;
+
+
+    return `
+
+        <div class="report-title">
+            Order Intelligence
+        </div>
+
+        <div class="report-subtitle">
+            ${total} order(s) matched your request
+        </div>
+
+
+        ${
+            orders.length
+            ?
+            `
+            <div class="report-table-wrapper">
+
+                <table class="report-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Order</th>
+                            <th>Customer</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Risk</th>
+                            <th>Total</th>
+                            <th>Due</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        ${orders.map(order => `
+
+                            <tr>
+
+                                <td>
+                                    <strong>
+                                        ${escapeHtml(
+                                            order.order_number ||
+                                            `#${order.id || "-"}`
+                                        )}
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    ${escapeHtml(
+                                        order.customer_name ||
+                                        `Customer #${order.customer_id || "-"}`
+                                    )}
+                                </td>
+
+                                <td>
+                                    ${escapeHtml(
+                                        order.date ||
+                                        formatDate(
+                                            order.created_at
+                                        )
+                                    )}
+                                </td>
+
+                                <td>
+                                    ${badge(
+                                        order.status
+                                    )}
+                                </td>
+
+                                <td>
+                                    ${badge(
+                                        order.risk_level ||
+                                        "low"
+                                    )}
+                                </td>
+
+                                <td>
+                                    <strong>
+                                        ${formatMoney(
+                                            order.total_amount
+                                        )}
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    ${formatMoney(
+                                        order.outstanding_amount
+                                    )}
+                                </td>
+
+                            </tr>
+
+                        `).join("")}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+            `
+            :
+            `
+            <div class="info-item">
+                No orders matched your request.
+            </div>
+            `
+        }
+
+
+        ${
+            report.ai_summary
+            ?
+            `
+            <div class="report-section">
+
+                <div class="report-section-title">
+                    AI Summary
+                </div>
+
+                <div class="ai-summary">
+
+                    🤖
+                    ${escapeHtml(
+                        report.ai_summary
+                    )}
+
+                </div>
+
+            </div>
+            `
+            :
+            ""
+        }
+
+    `;
+
+}
+
+
+/* =========================================================
+   INVENTORY
+========================================================= */
+
+function renderInventoryReport(report) {
+
+    const products =
+        report.products ||
+        report.inventory ||
+        [];
+
+
+    return `
+
+        <div class="report-title">
+
+            ${escapeHtml(
+                report.title ||
+                "Inventory Intelligence"
+            )}
+
+        </div>
+
+        <div class="report-subtitle">
+            Current product stock position
+        </div>
+
+
+        ${
+            Array.isArray(products) &&
+            products.length
+            ?
+            `
+            <div class="report-table-wrapper">
+
+                <table class="report-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>SKU</th>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                            <th>Status</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        ${products.map(product => `
+
+                            <tr>
+
+                                <td>
+                                    ${escapeHtml(
+                                        product.sku ||
+                                        "-"
+                                    )}
+                                </td>
+
+                                <td>
+                                    <strong>
+                                        ${escapeHtml(
+                                            product.name ||
+                                            "-"
+                                        )}
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    ${formatMoney(
+                                        product.price
+                                    )}
+                                </td>
+
+                                <td>
+                                    ${
+                                        product.stock_quantity ??
+                                        product.stock ??
+                                        0
+                                    }
+                                </td>
+
+                                <td>
+                                    ${badge(
+                                        product.stock_status ||
+                                        product.status ||
+                                        (
+                                            Number(
+                                                product.stock_quantity ||
+                                                product.stock ||
+                                                0
+                                            ) <= 0
+                                            ?
+                                            "out_of_stock"
+                                            :
+                                            Number(
+                                                product.stock_quantity ||
+                                                product.stock ||
+                                                0
+                                            ) <= 10
+                                            ?
+                                            "low_stock"
+                                            :
+                                            "healthy"
+                                        )
+                                    )}
+                                </td>
+
+                            </tr>
+
+                        `).join("")}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+            `
+            :
+            `
+            <div class="ai-summary">
+
+                ${escapeHtml(
+                    report.ai_summary ||
+                    "No inventory records found."
+                )}
+
+            </div>
+            `
+        }
+
+
+        ${
+            report.ai_summary &&
+            Array.isArray(products) &&
+            products.length
+            ?
+            `
+            <div class="report-section">
+
+                <div class="report-section-title">
+                    AI Inventory Insight
+                </div>
+
+                <div class="ai-summary">
+
+                    📦
+                    ${escapeHtml(
+                        report.ai_summary
+                    )}
+
+                </div>
+
+            </div>
+            `
+            :
+            ""
+        }
+
+    `;
+
+}
+
+
+/* =========================================================
+   BUSINESS SUMMARY
+========================================================= */
+
+function renderBusinessSummary(report) {
+
+    const products =
+        report.products || {};
+
+    const orders =
+        report.orders || {};
+
+    const financials =
+        report.financials || {};
+
+
+    return `
+
+        <div class="report-title">
+
+            ${escapeHtml(
+                report.title ||
+                "OrderOps AI Executive Business Summary"
+            )}
+
+        </div>
+
+        <div class="report-subtitle">
+            Overall business intelligence
+        </div>
+
+
+        <div class="report-grid">
+
+            <div class="report-stat">
+
+                <div class="report-stat-label">
+                    Customers
+                </div>
+
+                <div class="report-stat-value">
+                    ${report.customers ?? 0}
+                </div>
+
+            </div>
+
+
+            <div class="report-stat">
+
+                <div class="report-stat-label">
+                    Products
+                </div>
+
+                <div class="report-stat-value">
+                    ${products.total ?? 0}
+                </div>
+
+            </div>
+
+
+            <div class="report-stat">
+
+                <div class="report-stat-label">
+                    Active Products
+                </div>
+
+                <div class="report-stat-value">
+                    ${products.active ?? 0}
+                </div>
+
+            </div>
+
+
+            <div class="report-stat">
+
+                <div class="report-stat-label">
+                    Total Orders
+                </div>
+
+                <div class="report-stat-value">
+                    ${orders.total ?? 0}
+                </div>
+
+            </div>
+
+
+            <div class="report-stat">
+
+                <div class="report-stat-label">
+                    Completed
+                </div>
+
+                <div class="report-stat-value">
+                    ${orders.completed ?? 0}
+                </div>
+
+            </div>
+
+
+            <div class="report-stat">
+
+                <div class="report-stat-label">
+                    Pending
+                </div>
+
+                <div class="report-stat-value">
+                    ${orders.pending ?? 0}
+                </div>
+
+            </div>
+
+
+            <div class="report-stat">
+
+                <div class="report-stat-label">
+                    Total Sales
+                </div>
+
+                <div class="report-stat-value">
+                    ${formatMoney(
+                        financials.total_sales
+                    )}
+                </div>
+
+            </div>
+
+
+            <div class="report-stat">
+
+                <div class="report-stat-label">
+                    Outstanding
+                </div>
+
+                <div class="report-stat-value">
+                    ${formatMoney(
+                        financials.outstanding
+                    )}
+                </div>
+
+            </div>
+
+
+            <div class="report-stat">
+
+                <div class="report-stat-label">
+                    Recovered
+                </div>
+
+                <div class="report-stat-value">
+                    ${formatMoney(
+                        financials.recovered
+                    )}
+                </div>
+
+            </div>
+
+
+            <div class="report-stat">
+
+                <div class="report-stat-label">
+                    High Risk
+                </div>
+
+                <div class="report-stat-value">
+                    ${orders.high_risk ?? 0}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="report-section">
+
+            <div class="report-section-title">
+                AI Executive Summary
+            </div>
+
+            <div class="ai-summary">
+
+                🤖
+                ${escapeHtml(
+                    report.ai_summary ||
+                    "Business analysis completed."
+                )}
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =========================================================
+   GENERIC
+========================================================= */
+
+function renderGenericReport(report) {
+
+    if (!report) {
+
+        return `
+
+            <div class="report-title">
+                AI Assistant
+            </div>
+
+            <div class="ai-summary">
+                No report data was returned.
+            </div>
+
+        `;
+
+    }
+
+
+    return `
+
+        <div class="report-title">
+
+            ${escapeHtml(
+                report.title ||
+                "AI Business Report"
+            )}
+
+        </div>
+
+
+        ${
+            report.ai_summary
+            ?
+            `
+            <div class="ai-summary">
+
+                🤖
+                ${escapeHtml(
+                    report.ai_summary
+                )}
+
+            </div>
+            `
+            :
+            `
+            <div class="info-grid">
+
+                ${Object.entries(report)
+                    .filter(
+                        ([key]) =>
+                            key !== "type" &&
+                            key !== "query"
+                    )
+                    .map(
+                        ([key, value]) => `
+
+                            <div class="info-item">
+
+                                <div class="info-label">
+                                    ${escapeHtml(
+                                        key
+                                        .replace(
+                                            /_/g,
+                                            " "
+                                        )
+                                    )}
+                                </div>
+
+                                <div class="info-value">
+
+                                    ${
+                                        typeof value ===
+                                        "object"
+                                        ?
+                                        escapeHtml(
+                                            JSON.stringify(
+                                                value
+                                            )
+                                        )
+                                        :
+                                        escapeHtml(
+                                            value
+                                        )
+                                    }
+
+                                </div>
+
+                            </div>
+
+                        `
+                    )
+                    .join("")}
+
+            </div>
+            `
+        }
+
+    `;
+
+}
+
+
+/* =========================================================
+   REPORT ROUTER
+   IMPORTANT:
+   Backend response is:
+
+   {
+       success: true,
+       assistant: "OrderOps AI",
+       result: {
+           type: "...",
+           ...
+       }
+   }
+
+   Therefore we MUST use data.result.
+========================================================= */
+
+function renderReport(data) {
+
+    const report =
+        data?.result ||
+        data?.report ||
+        data;
+
+
+    const type =
+        report?.type ||
+        "";
+
+
+    console.log(
+        "OrderOps AI Response:",
+        data
+    );
+
+
+    switch (type) {
+
+        case "customer_report":
+
+            return renderCustomerReport(
+                report
+            );
+
+
+        case "today_report":
+
+            return renderTodayReport(
+                report
+            );
+
+
+        case "sales_report":
+
+            return renderSalesReport(
+                report
+            );
+
+
+        case "order_list":
+
+            return renderOrderListReport(
+                report
+            );
+
+
+        case "inventory_report":
+
+            return renderInventoryReport(
+                report
+            );
+
+
+        case "business_summary":
+
+            return renderBusinessSummary(
+                report
+            );
+
+
+        default:
+
+            if (report?.customer) {
+
+                return renderCustomerReport(
+                    report
+                );
+
+            }
+
+
+            if (
+                report?.sales ||
+                report?.financials
+            ) {
+
+                return renderSalesReport(
+                    report
+                );
+
+            }
+
+
+            if (
+                report?.orders_list
+            ) {
+
+                return renderOrderListReport(
+                    report
+                );
+
+            }
+
+
+            return renderGenericReport(
+                report
+            );
+
+    }
+
+}
+
+
+/* =========================================================
+   SEND QUERY
+========================================================= */
+
+async function sendQuery(query) {
+
+    query =
+        String(query || "")
+        .trim();
+
+
+    if (!query) {
+        return;
+    }
+
+
+    addUserMessage(query);
+
+
+    chatInput.value = "";
+
+    sendBtn.disabled = true;
+
+    addTyping();
+
+
+    try {
+
+        const result =
+            await apiFetch(
+                "/api/agents/query",
+                {
+                    method: "POST",
+
+                    body: {
+                        query: query
+                    }
+                }
+            );
+
+
+        removeTyping();
+
+
+        addAIMessage(
+            renderReport(result)
+        );
+
+    }
+
+    catch(error) {
+
+        removeTyping();
+
+
+        addAIMessage(`
+
+            <div class="report-title">
+                Unable to process request
+            </div>
+
+            <div class="ai-summary">
+
+                ⚠️
+                ${escapeHtml(
+                    error.message ||
+                    "Something went wrong."
+                )}
+
+            </div>
+
+        `);
+
+    }
+
+    finally {
+
+        sendBtn.disabled = false;
+
+        chatInput.focus();
+
+    }
+
+}
+
+
+/* =========================================================
+   QUICK ACTION
+========================================================= */
+
+function askQuick(query) {
+
+    sendQuery(query);
+
+}
+
+
+/* =========================================================
+   FORM SUBMIT
+========================================================= */
+
+chatForm.addEventListener(
+    "submit",
+    function(event) {
+
+        event.preventDefault();
+
+        sendQuery(
+            chatInput.value
+        );
+
+    }
+);
+
+
+/* =========================================================
+   CLEAR CHAT
+========================================================= */
+
+function clearChat() {
+
+    chatMessages.innerHTML = `
+
+        <div class="welcome-box">
+
+            <div class="welcome-icon">
+                🤖
+            </div>
+
+            <h2>
+                How can I help you?
+            </h2>
+
+            <p>
+                Ask me about customers, orders,
+                sales, risk or inventory.
+            </p>
+
+        </div>
+
+    `;
+
+    chatInput.focus();
+
+}
+
+</script>
+
+</body>
+
+</html>

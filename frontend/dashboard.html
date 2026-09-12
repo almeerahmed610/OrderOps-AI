@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>OrderOps AI Dashboard</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f7fb;
+            color: #172033;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+
+        .sidebar {
+            width: 245px;
+            background: #101828;
+            color: white;
+            padding: 25px 16px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 10;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 35px;
+            padding-left: 10px;
+        }
+
+        .logo span {
+            color: #4f9cf9;
+        }
+
+        .nav {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .nav a {
+            text-decoration: none;
+            color: #b8c1d1;
+            padding: 13px 14px;
+            border-radius: 8px;
+            display: block;
+            transition: .2s;
+        }
+
+        .nav a:hover,
+        .nav a.active {
+            background: #1d2939;
+            color: white;
+        }
+
+        /* MAIN */
+
+        .main {
+            margin-left: 245px;
+            width: calc(100% - 245px);
+            padding: 28px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+        }
+
+        .topbar h1 {
+            font-size: 28px;
+        }
+
+        .topbar p {
+            color: #667085;
+            margin-top: 5px;
+        }
+
+        .user {
+            background: white;
+            padding: 10px 16px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,.05);
+        }
+
+        /* CARDS */
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 14px;
+            padding: 22px;
+            box-shadow: 0 3px 15px rgba(16,24,40,.06);
+        }
+
+        .card-title {
+            color: #667085;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .card-value {
+            font-size: 30px;
+            font-weight: 700;
+        }
+
+        .green {
+            color: #12b76a;
+        }
+
+        .red {
+            color: #f04438;
+        }
+
+        .orange {
+            color: #f79009;
+        }
+
+        .blue {
+            color: #1570ef;
+        }
+
+        /* SECONDARY STATS */
+
+        .secondary-cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .secondary-card {
+            background: white;
+            border-radius: 14px;
+            padding: 18px 20px;
+            box-shadow: 0 3px 15px rgba(16,24,40,.06);
+        }
+
+        .secondary-title {
+            color: #667085;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .secondary-value {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        /* CONTENT */
+
+        .content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 22px;
+        }
+
+        .panel {
+            background: white;
+            border-radius: 14px;
+            padding: 22px;
+            box-shadow: 0 3px 15px rgba(16,24,40,.06);
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .panel-header h2 {
+            font-size: 18px;
+        }
+
+        .refresh-btn {
+            border: none;
+            background: #1570ef;
+            color: white;
+            padding: 8px 13px;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+
+        .refresh-btn:hover {
+            opacity: .9;
+        }
+
+        /* TABLE */
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 13px 8px;
+            text-align: left;
+            border-bottom: 1px solid #eaecf0;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        th {
+            color: #667085;
+            font-weight: 600;
+        }
+
+        /* BADGES */
+
+        .badge {
+            padding: 5px 9px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .badge.green {
+            background: #ecfdf3;
+        }
+
+        .badge.orange {
+            background: #fffaeb;
+        }
+
+        .badge.red {
+            background: #fef3f2;
+        }
+
+        .badge.blue {
+            background: #eff8ff;
+        }
+
+        /* ACTIVITY */
+
+        .activity {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-height: 430px;
+            overflow-y: auto;
+        }
+
+        .activity-item {
+            display: flex;
+            gap: 12px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid #eaecf0;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #1570ef;
+            margin-top: 5px;
+            flex-shrink: 0;
+        }
+
+        .activity-item strong {
+            font-size: 14px;
+        }
+
+        .activity-item p {
+            color: #667085;
+            font-size: 13px;
+            margin-top: 4px;
+            line-height: 1.4;
+        }
+
+        .activity-time {
+            color: #98a2b3;
+            font-size: 11px;
+            margin-top: 5px;
+        }
+
+        /* LOADING */
+
+        .loading {
+            color: #667085;
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        .error {
+            background: #fef3f2;
+            color: #b42318;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 1100px) {
+
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .secondary-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 700px) {
+
+            .sidebar {
+                width: 70px;
+                padding: 20px 8px;
+            }
+
+            .logo {
+                font-size: 0;
+            }
+
+            .logo span {
+                font-size: 20px;
+            }
+
+            .nav a {
+                font-size: 0;
+                text-align: center;
+                padding: 13px 5px;
+            }
+
+            .main {
+                margin-left: 70px;
+                width: calc(100% - 70px);
+                padding: 18px;
+            }
+
+            .cards,
+            .secondary-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .topbar {
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .topbar h1 {
+                font-size: 22px;
+            }
+
+            .user {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="layout">
+
+    <!-- =====================================================
+         SIDEBAR
+    ====================================================== -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            OrderOps <span>AI</span>
+        </div>
+
+        <nav class="nav">
+
+            <a href="dashboard.html" class="active">
+                📊 Dashboard
+            </a>
+
+            <a href="customers.html">
+                👥 Customers
+            </a>
+
+            <a href="products.html">
+                📦 Products
+            </a>
+
+            <a href="orders.html">
+                🛒 Orders
+            </a>
+
+            <a href="review-queue.html">
+                ⚠️ Review Queue
+            </a>
+
+            <a href="ai-agents.html">
+                🤖 AI Agents
+            </a>
+
+            <a href="reports.html">
+                📈 Reports
+            </a>
+
+            <a href="settings.html">
+                ⚙️ Settings
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+
+    <main class="main">
+
+        <div class="topbar">
+
+            <div>
+                <h1>AI Operations Dashboard</h1>
+
+                <p>
+                    Monitor orders, automation and AI decisions
+                </p>
+            </div>
+
+            <div class="user">
+                👤 Admin
+            </div>
+
+        </div>
+
+
+        <div id="errorBox" class="error"></div>
+
+
+        <!-- =================================================
+             MAIN STAT CARDS
+        ================================================== -->
+
+        <section class="cards">
+
+            <div class="card">
+
+                <div class="card-title">
+                    Total Orders
+                </div>
+
+                <div
+                    id="totalOrders"
+                    class="card-value blue"
+                >
+                    0
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="card-title">
+                    AI Approved
+                </div>
+
+                <div
+                    id="aiApproved"
+                    class="card-value green"
+                >
+                    0
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="card-title">
+                    Manual Review
+                </div>
+
+                <div
+                    id="manualReview"
+                    class="card-value orange"
+                >
+                    0
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="card-title">
+                    High Risk
+                </div>
+
+                <div
+                    id="highRisk"
+                    class="card-value red"
+                >
+                    0
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             SECONDARY CARDS
+        ================================================== -->
+
+        <section class="secondary-cards">
+
+            <div class="secondary-card">
+
+                <div class="secondary-title">
+                    Customers
+                </div>
+
+                <div
+                    id="totalCustomers"
+                    class="secondary-value"
+                >
+                    0
+                </div>
+
+            </div>
+
+
+            <div class="secondary-card">
+
+                <div class="secondary-title">
+                    Active Products
+                </div>
+
+                <div
+                    id="totalProducts"
+                    class="secondary-value"
+                >
+                    0
+                </div>
+
+            </div>
+
+
+            <div class="secondary-card">
+
+                <div class="secondary-title">
+                    Low Stock
+                </div>
+
+                <div
+                    id="lowStock"
+                    class="secondary-value red"
+                >
+                    0
+                </div>
+
+            </div>
+
+
+            <div class="secondary-card">
+
+                <div class="secondary-title">
+                    Total Revenue
+                </div>
+
+                <div
+                    id="totalRevenue"
+                    class="secondary-value green"
+                >
+                    $0
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             CONTENT
+        ================================================== -->
+
+        <section class="content">
+
+
+            <!-- RECENT ORDERS -->
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <h2>
+                        Recent Orders
+                    </h2>
+
+                    <button
+                        class="refresh-btn"
+                        onclick="loadDashboard()"
+                    >
+                        ↻ Refresh
+                    </button>
+
+                </div>
+
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Order
+                                </th>
+
+                                <th>
+                                    Customer
+                                </th>
+
+                                <th>
+                                    Amount
+                                </th>
+
+                                <th>
+                                    Risk
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody
+                            id="ordersTable"
+                        >
+
+                            <tr>
+                                <td
+                                    colspan="5"
+                                    class="loading"
+                                >
+                                    Loading orders...
+                                </td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+            <!-- AI ACTIVITY -->
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <h2>
+                        AI Activity
+                    </h2>
+
+                </div>
+
+
+                <div
+                    id="activityList"
+                    class="activity"
+                >
+
+                    <div class="loading">
+                        Loading AI activity...
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script>
+
+    // ========================================================
+    // CONFIG
+    // ========================================================
+
+    const API_BASE = "http://127.0.0.1:8000";
+
+
+    // ========================================================
+    // GET TOKEN
+    // ========================================================
+
+    function getToken() {
+
+        const possibleKeys = [
+            "access_token",
+            "token",
+            "orderops_token",
+            "water_business_token"
+        ];
+
+        for (const key of possibleKeys) {
+
+            const value = localStorage.getItem(key);
+
+            if (value) {
+                return value;
+            }
+        }
+
+        return null;
+    }
+
+
+    // ========================================================
+    // FORMAT MONEY
+    // ========================================================
+
+    function formatMoney(value) {
+
+        const number = Number(value || 0);
+
+        return "$" + number.toLocaleString(
+            "en-US",
+            {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }
+        );
+    }
+
+
+    // ========================================================
+    // FORMAT DATE
+    // ========================================================
+
+    function formatDate(value) {
+
+        if (!value) {
+            return "";
+        }
+
+        const date = new Date(value);
+
+        if (isNaN(date.getTime())) {
+            return "";
+        }
+
+        return date.toLocaleString();
+    }
+
+
+    // ========================================================
+    // RISK BADGE
+    // ========================================================
+
+    function riskBadge(level) {
+
+        const risk = String(
+            level || "low"
+        ).toLowerCase();
+
+        let className = "green";
+
+        if (risk === "medium") {
+            className = "orange";
+        }
+
+        if (risk === "high") {
+            className = "red";
+        }
+
+        return `
+            <span class="badge ${className}">
+                ${risk.charAt(0).toUpperCase() + risk.slice(1)}
+            </span>
+        `;
+    }
+
+
+    // ========================================================
+    // STATUS BADGE
+    // ========================================================
+
+    function statusBadge(status) {
+
+        const value = String(
+            status || "pending"
+        ).toLowerCase();
+
+        let className = "blue";
+
+        if (
+            value === "approved" ||
+            value === "fulfillment_ready" ||
+            value === "completed"
+        ) {
+            className = "green";
+        }
+
+        else if (
+            value === "review" ||
+            value === "manual_review" ||
+            value === "inventory_review"
+        ) {
+            className = "orange";
+        }
+
+        else if (
+            value === "cancelled" ||
+            value === "refunded"
+        ) {
+            className = "red";
+        }
+
+        const label = value
+            .replaceAll("_", " ")
+            .replace(/\b\w/g, c => c.toUpperCase());
+
+        return `
+            <span class="badge ${className}">
+                ${label}
+            </span>
+        `;
+    }
+
+
+    // ========================================================
+    // SHOW ERROR
+    // ========================================================
+
+    function showError(message) {
+
+        const box = document.getElementById(
+            "errorBox"
+        );
+
+        box.textContent = message;
+
+        box.style.display = "block";
+    }
+
+
+    // ========================================================
+    // LOAD DASHBOARD
+    // ========================================================
+
+    async function loadDashboard() {
+
+        const token = getToken();
+
+        if (!token) {
+
+            showError(
+                "Login token not found. Please login first."
+            );
+
+            return;
+        }
+
+
+        try {
+
+            const response = await fetch(
+                `${API_BASE}/api/dashboard/`,
+                {
+                    method: "GET",
+
+                    headers: {
+                        "Accept": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    }
+                }
+            );
+
+
+            if (!response.ok) {
+
+                const errorText =
+                    await response.text();
+
+                throw new Error(
+                    `Dashboard API failed (${response.status}): ${errorText}`
+                );
+            }
+
+
+            const data =
+                await response.json();
+
+
+            updateDashboard(data);
+
+
+        } catch (error) {
+
+            console.error(
+                "Dashboard Error:",
+                error
+            );
+
+            showError(
+                "Unable to load dashboard data. Make sure the backend is running."
+            );
+        }
+    }
+
+
+    // ========================================================
+    // UPDATE DASHBOARD
+    // ========================================================
+
+    function updateDashboard(data) {
+
+        const stats =
+            data.stats || {};
+
+
+        // Main stats
+
+        document.getElementById(
+            "totalOrders"
+        ).textContent =
+            stats.total_orders || 0;
+
+
+        document.getElementById(
+            "aiApproved"
+        ).textContent =
+            stats.ai_approved || 0;
+
+
+        document.getElementById(
+            "manualReview"
+        ).textContent =
+            stats.manual_review || 0;
+
+
+        document.getElementById(
+            "highRisk"
+        ).textContent =
+            stats.high_risk || 0;
+
+
+        // Secondary stats
+
+        document.getElementById(
+            "totalCustomers"
+        ).textContent =
+            stats.total_customers || 0;
+
+
+        document.getElementById(
+            "totalProducts"
+        ).textContent =
+            stats.total_products || 0;
+
+
+        document.getElementById(
+            "lowStock"
+        ).textContent =
+            stats.low_stock_products || 0;
+
+
+        document.getElementById(
+            "totalRevenue"
+        ).textContent =
+            formatMoney(
+                stats.total_revenue
+            );
+
+
+        // Recent orders
+
+        renderOrders(
+            data.recent_orders || []
+        );
+
+
+        // AI activity
+
+        renderActivity(
+            data.ai_activity || []
+        );
+    }
+
+
+    // ========================================================
+    // RENDER ORDERS
+    // ========================================================
+
+    function renderOrders(orders) {
+
+        const table =
+            document.getElementById(
+                "ordersTable"
+            );
+
+
+        if (!orders.length) {
+
+            table.innerHTML = `
+                <tr>
+                    <td
+                        colspan="5"
+                        class="loading"
+                    >
+                        No orders found.
+                    </td>
+                </tr>
+            `;
+
+            return;
+        }
+
+
+        table.innerHTML =
+            orders.map(order => `
+
+                <tr>
+
+                    <td>
+                        <strong>
+                            ${escapeHtml(
+                                order.order_number
+                            )}
+                        </strong>
+                    </td>
+
+                    <td>
+                        ${escapeHtml(
+                            order.customer_name
+                        )}
+                    </td>
+
+                    <td>
+                        ${formatMoney(
+                            order.amount
+                        )}
+                    </td>
+
+                    <td>
+                        ${riskBadge(
+                            order.risk_level
+                        )}
+                    </td>
+
+                    <td>
+                        ${statusBadge(
+                            order.status
+                        )}
+                    </td>
+
+                </tr>
+
+            `).join("");
+    }
+
+
+    // ========================================================
+    // RENDER AI ACTIVITY
+    // ========================================================
+
+    function renderActivity(events) {
+
+        const container =
+            document.getElementById(
+                "activityList"
+            );
+
+
+        if (!events.length) {
+
+            container.innerHTML = `
+                <div class="loading">
+                    No AI activity yet.
+                </div>
+            `;
+
+            return;
+        }
+
+
+        container.innerHTML =
+            events.map(event => `
+
+                <div class="activity-item">
+
+                    <div class="dot"></div>
+
+                    <div>
+
+                        <strong>
+                            ${escapeHtml(
+                                event.node_name
+                            )}
+                        </strong>
+
+                        <p>
+                            ${escapeHtml(
+                                event.message ||
+                                "AI agent completed an operation."
+                            )}
+                        </p>
+
+                        <div class="activity-time">
+                            ${formatDate(
+                                event.created_at
+                            )}
+                        </div>
+
+                    </div>
+
+                </div>
+
+            `).join("");
+    }
+
+
+    // ========================================================
+    // HTML ESCAPE
+    // ========================================================
+
+    function escapeHtml(value) {
+
+        if (value === null ||
+            value === undefined) {
+
+            return "";
+        }
+
+        return String(value)
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+    }
+
+
+    // ========================================================
+    // START
+    // ========================================================
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            loadDashboard();
+
+        }
+    );
+
+</script>
+
+</body>
+</html>

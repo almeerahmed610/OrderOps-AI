@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory - OrderOps AI</title>
+    <link rel="stylesheet" href="css/app.css">
+</head>
+
+<body>
+
+<div class="app-shell">
+
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-mark">O</div>
+            <div>
+                <strong>OrderOps AI</strong>
+                <small>Operations Center</small>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="customers.html">Customers</a>
+            <a href="products.html">Products</a>
+            <a href="inventory.html" class="active">Inventory</a>
+            <a href="orders.html">Orders</a>
+            <a href="review-queue.html">Review Queue</a>
+            <a href="negotiations.html">Negotiations</a>
+            <a href="ai-agents.html">AI Agents</a>
+            <a href="reports.html">Reports</a>
+            <a href="settings.html">Settings</a>
+        </nav>
+
+        <button onclick="logout()" class="btn btn-danger">
+            Logout
+        </button>
+    </aside>
+
+    <main class="main-content">
+
+        <div class="page-header">
+            <div>
+                <h1>Inventory</h1>
+                <p>Monitor product stock and inventory health.</p>
+            </div>
+        </div>
+
+        <section class="stats-grid">
+            <div class="stat-card">
+                <span>Total Products</span>
+                <strong id="totalProducts">0</strong>
+            </div>
+
+            <div class="stat-card">
+                <span>Healthy Stock</span>
+                <strong id="healthyStock">0</strong>
+            </div>
+
+            <div class="stat-card">
+                <span>Low Stock</span>
+                <strong id="lowStock">0</strong>
+            </div>
+
+            <div class="stat-card">
+                <span>Out of Stock</span>
+                <strong id="outStock">0</strong>
+            </div>
+        </section>
+
+        <section class="panel">
+
+            <div class="panel-header">
+                <h2>Stock Overview</h2>
+
+                <input
+                    type="text"
+                    id="search"
+                    class="form-control"
+                    placeholder="Search product..."
+                    oninput="renderProducts()"
+                >
+            </div>
+
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>SKU</th>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="inventoryBody">
+                        <tr>
+                            <td colspan="5">Loading inventory...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
+
+    </main>
+</div>
+
+<script src="js/api.js"></script>
+
+<script>
+
+let products = [];
+
+async function loadInventory() {
+
+    try {
+
+        const response = await apiFetch("/api/products/");
+
+        if (!response.ok) {
+            throw new Error("Unable to load inventory.");
+        }
+
+        products = await response.json();
+
+        updateStats();
+        renderProducts();
+
+    } catch (error) {
+
+        document.getElementById("inventoryBody").innerHTML =
+            `<tr><td colspan="5">${escapeHtml(error.message)}</td></tr>`;
+
+    }
+}
+
+function updateStats() {
+
+    const active = products.filter(p => p.is_active);
+
+    document.getElementById("totalProducts").textContent = active.length;
+
+    document.getElementById("healthyStock").textContent =
+        active.filter(p => p.stock_quantity > 10).length;
+
+    document.getElementById("lowStock").textContent =
+        active.filter(p =>
+            p.stock_quantity > 0 &&
+            p.stock_quantity <= 10
+        ).length;
+
+    document.getElementById("outStock").textContent =
+        active.filter(p => p.stock_quantity <= 0).length;
+}
+
+function renderProducts() {
+
+    const search =
+        document.getElementById("search").value
+        .toLowerCase()
+        .trim();
+
+    const filtered = products.filter(product =>
+        product.is_active &&
+        (
+            product.name.toLowerCase().includes(search) ||
+            product.sku.toLowerCase().includes(search)
+        )
+    );
+
+    const body = document.getElementById("inventoryBody");
+
+    if (!filtered.length) {
+        body.innerHTML =
+            `<tr><td colspan="5">No products found.</td></tr>`;
+        return;
+    }
+
+    body.innerHTML = filtered.map(product => {
+
+        let status = "Healthy";
+        let badge = "badge-success";
+
+        if (product.stock_quantity <= 0) {
+            status = "Out of Stock";
+            badge = "badge-danger";
+        } else if (product.stock_quantity <= 10) {
+            status = "Low Stock";
+            badge = "badge-warning";
+        }
+
+        return `
+            <tr>
+                <td>${escapeHtml(product.sku)}</td>
+                <td>
+                    <strong>${escapeHtml(product.name)}</strong>
+                    <br>
+                    <small>${escapeHtml(product.description || "")}</small>
+                </td>
+                <td>${money(product.price)}</td>
+                <td><strong>${product.stock_quantity}</strong></td>
+                <td>
+                    <span class="badge ${badge}">
+                        ${status}
+                    </span>
+                </td>
+            </tr>
+        `;
+
+    }).join("");
+}
+
+function logout() {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("user");
+    window.location.href = "login.html";
+}
+
+requireAuth();
+loadInventory();
+
+</script>
+
+</body>
+</html>

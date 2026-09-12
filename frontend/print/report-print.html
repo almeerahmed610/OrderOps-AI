@@ -1,0 +1,1787 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>OrderOps AI - Order Report</title>
+
+    <link
+        rel="stylesheet"
+        href="../css/app.css"
+    >
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 24px;
+            background: #f3f4f6;
+            color: #111827;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .print-actions {
+            max-width: 1100px;
+            margin: 0 auto 18px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .print-actions button {
+            border: none;
+            border-radius: 8px;
+            padding: 11px 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .btn-print {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-close {
+            background: #6b7280;
+            color: white;
+        }
+
+        .loading,
+        .error {
+            max-width: 1100px;
+            margin: 50px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,.08);
+        }
+
+        .error {
+            color: #b91c1c;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+        }
+
+        .report {
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px;
+            background: white;
+            box-shadow: 0 8px 30px rgba(0,0,0,.08);
+        }
+
+        .business-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 30px;
+            padding-bottom: 22px;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #111827;
+        }
+
+        .business-left {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            min-width: 0;
+        }
+
+        .business-logo {
+            width: 72px;
+            height: 72px;
+            object-fit: contain;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .business-info {
+            min-width: 0;
+        }
+
+        .business-info h1 {
+            margin: 0 0 5px;
+            font-size: 30px;
+            line-height: 1.15;
+            color: #111827;
+        }
+
+        .business-description {
+            margin: 0 0 7px;
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        .business-contact {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px 14px;
+            color: #4b5563;
+            font-size: 11px;
+        }
+
+        .business-contact span {
+            white-space: nowrap;
+        }
+
+        .report-title {
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .report-title h2 {
+            margin: 0;
+            font-size: 25px;
+            letter-spacing: .8px;
+        }
+
+        .report-title p {
+            margin: 6px 0 0;
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .summary-card {
+            padding: 17px;
+            border: 1px solid #e5e7eb;
+            border-radius: 9px;
+            background: #f9fafb;
+        }
+
+        .summary-label {
+            color: #6b7280;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            margin-bottom: 7px;
+        }
+
+        .summary-value {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .report-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            padding: 12px 15px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: #fafafa;
+            font-size: 13px;
+        }
+
+        .table-wrapper {
+            width: 100%;
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead th {
+            padding: 11px 9px;
+            background: #111827;
+            color: white;
+            text-align: left;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .3px;
+        }
+
+        tbody td {
+            padding: 10px 9px;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 12px;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #f9fafb;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .status-approved {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-review {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-pending {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .status-other {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .risk-high {
+            color: #dc2626;
+            font-weight: 700;
+        }
+
+        .risk-medium {
+            color: #d97706;
+            font-weight: 700;
+        }
+
+        .risk-low {
+            color: #15803d;
+            font-weight: 700;
+        }
+
+        .payment-section {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .payment-title {
+            margin: 0 0 10px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+        }
+
+        .payment-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .payment-box {
+            padding: 12px 14px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: #fafafa;
+            font-size: 11px;
+            line-height: 1.7;
+        }
+
+        .payment-box strong {
+            color: #111827;
+        }
+
+        .report-footer {
+            margin-top: 35px;
+            padding-top: 16px;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            color: #6b7280;
+            font-size: 11px;
+        }
+
+        @media (max-width: 800px) {
+
+            body {
+                padding: 10px;
+            }
+
+            .report {
+                padding: 20px;
+            }
+
+            .business-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .report-title {
+                text-align: left;
+            }
+
+            .summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .report-info {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 6px;
+            }
+
+            .payment-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .report-footer {
+                flex-direction: column;
+            }
+        }
+
+        @media print {
+
+            @page {
+                size: A4 landscape;
+                margin: 10mm;
+            }
+
+            html,
+            body {
+                width: 100%;
+                margin: 0;
+                padding: 0;
+                background: white;
+            }
+
+            .print-actions,
+            .loading,
+            .error {
+                display: none !important;
+            }
+
+            .report {
+                display: block !important;
+                width: 100%;
+                max-width: none;
+                margin: 0;
+                padding: 0;
+                box-shadow: none;
+            }
+
+            .business-header,
+            .summary-grid,
+            .report-info,
+            .payment-section,
+            .report-footer {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+
+            tr {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="print-actions">
+
+        <button
+            class="btn-print"
+            onclick="window.print()"
+        >
+            🖨 Print Report
+        </button>
+
+        <button
+            class="btn-close"
+            onclick="window.close()"
+        >
+            Close
+        </button>
+
+    </div>
+
+    <div
+        id="loading"
+        class="loading"
+    >
+        Loading report...
+    </div>
+
+    <div
+        id="error"
+        class="error"
+        style="display:none;"
+    ></div>
+
+    <div
+        id="report"
+        class="report"
+        style="display:none;"
+    >
+
+        <!-- BUSINESS HEADER -->
+
+        <div class="business-header">
+
+            <div class="business-left">
+
+                <img
+                    id="businessLogo"
+                    class="business-logo"
+                    alt="Business Logo"
+                >
+
+                <div class="business-info">
+
+                    <h1 id="businessName">
+                        OrderOps AI
+                    </h1>
+
+                    <p
+                        id="businessDescription"
+                        class="business-description"
+                    >
+                        Autonomous Order Operations powered by AI agents.
+                    </p>
+
+                    <div
+                        id="businessContact"
+                        class="business-contact"
+                    ></div>
+
+                </div>
+
+            </div>
+
+            <div class="report-title">
+
+                <h2>
+                    ORDER REPORT
+                </h2>
+
+                <p>
+                    Generated:
+                    <span id="generatedDate">-</span>
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- SUMMARY -->
+
+        <div class="summary-grid">
+
+            <div class="summary-card">
+
+                <div class="summary-label">
+                    Total Orders
+                </div>
+
+                <div
+                    id="totalOrders"
+                    class="summary-value"
+                >
+                    0
+                </div>
+
+            </div>
+
+            <div class="summary-card">
+
+                <div class="summary-label">
+                    Total Revenue
+                </div>
+
+                <div
+                    id="totalRevenue"
+                    class="summary-value"
+                >
+                    Rs. 0.00
+                </div>
+
+            </div>
+
+            <div class="summary-card">
+
+                <div class="summary-label">
+                    High Risk
+                </div>
+
+                <div
+                    id="highRisk"
+                    class="summary-value"
+                >
+                    0
+                </div>
+
+            </div>
+
+            <div class="summary-card">
+
+                <div class="summary-label">
+                    Average Order
+                </div>
+
+                <div
+                    id="averageOrder"
+                    class="summary-value"
+                >
+                    Rs. 0.00
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- REPORT INFO -->
+
+        <div class="report-info">
+
+            <span>
+                <strong>Report:</strong>
+                All Orders
+            </span>
+
+            <span>
+                <strong>Total Records:</strong>
+                <span id="recordCount">0</span>
+            </span>
+
+        </div>
+
+        <!-- TABLE -->
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>#</th>
+
+                        <th>Order Number</th>
+
+                        <th>Customer</th>
+
+                        <th>Status</th>
+
+                        <th>Risk</th>
+
+                        <th class="text-right">
+                            Amount
+                        </th>
+
+                        <th class="text-right">
+                            Recovered
+                        </th>
+
+                        <th>Date</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="reportBody"></tbody>
+
+            </table>
+
+        </div>
+
+        <!-- PAYMENT -->
+
+        <div
+            id="paymentSection"
+            class="payment-section"
+            style="display:none;"
+        >
+
+            <div class="payment-title">
+                Business Payment Details
+            </div>
+
+            <div class="payment-grid">
+
+                <div
+                    id="bankBox"
+                    class="payment-box"
+                ></div>
+
+                <div
+                    id="jazzcashBox"
+                    class="payment-box"
+                ></div>
+
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+
+        <div class="report-footer">
+
+            <span id="footerBusinessName">
+                OrderOps AI
+            </span>
+
+            <span>
+                Confidential Business Report
+            </span>
+
+            <span>
+                Generated automatically
+            </span>
+
+        </div>
+
+    </div>
+
+    <script src="../js/api.js"></script>
+
+    <script>
+
+        /*
+        ========================================================
+        SETTINGS SYSTEM
+        ========================================================
+        */
+
+        const SETTINGS_KEY = "orderops_settings";
+
+
+        const DEFAULT_SETTINGS = {
+
+            workspaceName: "OrderOps AI",
+
+            currency: "PKR",
+
+            phone: "",
+
+            email: "",
+
+            address: "",
+
+            description:
+                "Autonomous Order Operations powered by AI agents.",
+
+            bankName: "",
+
+            accountTitle: "",
+
+            accountNumber: "",
+
+            jazzcash: "",
+
+            logo: ""
+
+        };
+
+
+        /*
+        ========================================================
+        GET SETTINGS
+        ========================================================
+        */
+
+        function getReportSettings() {
+
+            let settings = {
+                ...DEFAULT_SETTINGS
+            };
+
+
+            /*
+             * Primary settings key
+             */
+
+            try {
+
+                const saved =
+                    localStorage.getItem(
+                        SETTINGS_KEY
+                    );
+
+
+                if (saved) {
+
+                    const parsed =
+                        JSON.parse(saved);
+
+
+                    if (
+                        parsed &&
+                        typeof parsed === "object"
+                    ) {
+
+                        settings = {
+                            ...settings,
+                            ...parsed
+                        };
+
+                    }
+
+                }
+
+            } catch (error) {
+
+                console.error(
+                    "Settings read error:",
+                    error
+                );
+
+            }
+
+
+            /*
+             * Compatibility with possible
+             * alternative setting field names.
+             */
+
+            const aliases = {
+
+                workspaceName: [
+                    "workspaceName",
+                    "workspace_name",
+                    "companyName",
+                    "company_name",
+                    "businessName",
+                    "business_name",
+                    "shopName",
+                    "shop_name"
+                ],
+
+                currency: [
+                    "currency",
+                    "currencyCode",
+                    "currency_code"
+                ],
+
+                phone: [
+                    "phone",
+                    "phoneNumber",
+                    "phone_number",
+                    "businessPhone",
+                    "business_phone"
+                ],
+
+                email: [
+                    "email",
+                    "businessEmail",
+                    "business_email"
+                ],
+
+                address: [
+                    "address",
+                    "businessAddress",
+                    "business_address"
+                ],
+
+                description: [
+                    "description",
+                    "businessDescription",
+                    "business_description"
+                ],
+
+                bankName: [
+                    "bankName",
+                    "bank_name"
+                ],
+
+                accountTitle: [
+                    "accountTitle",
+                    "account_title"
+                ],
+
+                accountNumber: [
+                    "accountNumber",
+                    "account_number",
+                    "iban"
+                ],
+
+                jazzcash: [
+                    "jazzcash",
+                    "jazzCash",
+                    "jazzcashNumber",
+                    "jazzcash_number"
+                ],
+
+                logo: [
+                    "logo",
+                    "logoUrl",
+                    "logo_url",
+                    "logoData",
+                    "logo_data"
+                ]
+
+            };
+
+
+            /*
+             * Resolve aliases
+             */
+
+            Object.keys(aliases).forEach(
+                key => {
+
+                    const names =
+                        aliases[key];
+
+
+                    for (
+                        const name of names
+                    ) {
+
+                        if (
+                            settings[name] !==
+                                undefined &&
+                            settings[name] !==
+                                null &&
+                            String(
+                                settings[name]
+                            ).trim() !== ""
+                        ) {
+
+                            settings[key] =
+                                settings[name];
+
+                            break;
+
+                        }
+
+                    }
+
+                }
+            );
+
+
+            console.log(
+                "REPORT SETTINGS:",
+                settings
+            );
+
+
+            return settings;
+
+        }
+
+
+        /*
+        ========================================================
+        APPLY BUSINESS SETTINGS
+        ========================================================
+        */
+
+        function applyBusinessSettings() {
+
+            const settings =
+                getReportSettings();
+
+
+            /*
+             * NAME
+             */
+
+            const businessName =
+                settings.workspaceName ||
+                "OrderOps AI";
+
+
+            document.getElementById(
+                "businessName"
+            ).textContent =
+                businessName;
+
+
+            document.getElementById(
+                "footerBusinessName"
+            ).textContent =
+                businessName;
+
+
+            /*
+             * DESCRIPTION
+             */
+
+            document.getElementById(
+                "businessDescription"
+            ).textContent =
+                settings.description ||
+                "";
+
+
+            /*
+             * LOGO
+             */
+
+            const logo =
+                document.getElementById(
+                    "businessLogo"
+                );
+
+
+            if (
+                settings.logo &&
+                String(settings.logo).trim() !== ""
+            ) {
+
+                logo.src =
+                    settings.logo;
+
+                logo.style.display =
+                    "block";
+
+            } else {
+
+                logo.removeAttribute("src");
+
+                logo.style.display =
+                    "none";
+
+            }
+
+
+            /*
+             * CONTACT
+             */
+
+            const contact =
+                document.getElementById(
+                    "businessContact"
+                );
+
+
+            let contactHTML = "";
+
+
+            if (settings.phone) {
+
+                contactHTML += `
+                    <span>
+                        📞 ${escapeHtml(
+                            settings.phone
+                        )}
+                    </span>
+                `;
+
+            }
+
+
+            if (settings.email) {
+
+                contactHTML += `
+                    <span>
+                        ✉ ${escapeHtml(
+                            settings.email
+                        )}
+                    </span>
+                `;
+
+            }
+
+
+            if (settings.address) {
+
+                contactHTML += `
+                    <span>
+                        📍 ${escapeHtml(
+                            settings.address
+                        )}
+                    </span>
+                `;
+
+            }
+
+
+            contact.innerHTML =
+                contactHTML;
+
+
+            /*
+             * PAYMENT DETAILS
+             */
+
+            const paymentSection =
+                document.getElementById(
+                    "paymentSection"
+                );
+
+
+            const bankBox =
+                document.getElementById(
+                    "bankBox"
+                );
+
+
+            const jazzcashBox =
+                document.getElementById(
+                    "jazzcashBox"
+                );
+
+
+            const hasBank =
+                Boolean(
+                    settings.bankName ||
+                    settings.accountTitle ||
+                    settings.accountNumber
+                );
+
+
+            const hasJazzCash =
+                Boolean(
+                    settings.jazzcash
+                );
+
+
+            if (
+                !hasBank &&
+                !hasJazzCash
+            ) {
+
+                paymentSection.style.display =
+                    "none";
+
+            } else {
+
+                paymentSection.style.display =
+                    "block";
+
+            }
+
+
+            /*
+             * BANK
+             */
+
+            if (hasBank) {
+
+                bankBox.style.display =
+                    "block";
+
+
+                bankBox.innerHTML = `
+
+                    <strong>
+                        Bank Account
+                    </strong>
+
+                    <br>
+
+                    ${
+                        settings.bankName
+                            ? `
+                                <b>Bank:</b>
+                                ${escapeHtml(
+                                    settings.bankName
+                                )}
+                                <br>
+                              `
+                            : ""
+                    }
+
+                    ${
+                        settings.accountTitle
+                            ? `
+                                <b>Account Title:</b>
+                                ${escapeHtml(
+                                    settings.accountTitle
+                                )}
+                                <br>
+                              `
+                            : ""
+                    }
+
+                    ${
+                        settings.accountNumber
+                            ? `
+                                <b>Account / IBAN:</b>
+                                ${escapeHtml(
+                                    settings.accountNumber
+                                )}
+                              `
+                            : ""
+                    }
+
+                `;
+
+            } else {
+
+                bankBox.style.display =
+                    "none";
+
+                bankBox.innerHTML = "";
+
+            }
+
+
+            /*
+             * JAZZCASH
+             */
+
+            if (hasJazzCash) {
+
+                jazzcashBox.style.display =
+                    "block";
+
+
+                jazzcashBox.innerHTML = `
+
+                    <strong>
+                        JazzCash
+                    </strong>
+
+                    <br>
+
+                    <b>Number:</b>
+                    ${escapeHtml(
+                        settings.jazzcash
+                    )}
+
+                `;
+
+            } else {
+
+                jazzcashBox.style.display =
+                    "none";
+
+                jazzcashBox.innerHTML = "";
+
+            }
+
+        }
+
+
+        /*
+        ========================================================
+        CURRENCY
+        ========================================================
+        */
+
+        function money(value) {
+
+            const settings =
+                getReportSettings();
+
+
+            const amount =
+                Number(value || 0);
+
+
+            const currency =
+                String(
+                    settings.currency || "PKR"
+                ).toUpperCase();
+
+
+            if (
+                currency === "USD"
+            ) {
+
+                return (
+                    "$" +
+                    amount.toLocaleString(
+                        "en-US",
+                        {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        }
+                    )
+                );
+
+            }
+
+
+            if (
+                currency === "EUR"
+            ) {
+
+                return (
+                    "€" +
+                    amount.toLocaleString(
+                        "en-US",
+                        {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        }
+                    )
+                );
+
+            }
+
+
+            return (
+                "Rs. " +
+                amount.toLocaleString(
+                    "en-PK",
+                    {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    }
+                )
+            );
+
+        }
+
+
+        /*
+        ========================================================
+        LOAD REPORT
+        ========================================================
+        */
+
+        async function loadReport() {
+
+            const orders =
+                await apiFetch(
+                    "/api/orders/"
+                );
+
+
+            if (
+                !Array.isArray(orders)
+            ) {
+
+                throw new Error(
+                    "Backend returned invalid order data."
+                );
+
+            }
+
+
+            renderReport(
+                orders
+            );
+
+        }
+
+
+        /*
+        ========================================================
+        RENDER REPORT
+        ========================================================
+        */
+
+        function renderReport(
+            orders
+        ) {
+
+            const totalOrders =
+                orders.length;
+
+
+            const totalRevenue =
+                orders.reduce(
+                    (
+                        total,
+                        order
+                    ) => {
+
+                        return (
+                            total +
+                            Number(
+                                order.total_amount || 0
+                            )
+                        );
+
+                    },
+                    0
+                );
+
+
+            const highRisk =
+                orders.filter(
+                    order =>
+                        order.risk_level === "high"
+                ).length;
+
+
+            const averageOrder =
+                totalOrders > 0
+                    ? totalRevenue / totalOrders
+                    : 0;
+
+
+            document.getElementById(
+                "totalOrders"
+            ).textContent =
+                totalOrders;
+
+
+            document.getElementById(
+                "totalRevenue"
+            ).textContent =
+                money(totalRevenue);
+
+
+            document.getElementById(
+                "highRisk"
+            ).textContent =
+                highRisk;
+
+
+            document.getElementById(
+                "averageOrder"
+            ).textContent =
+                money(averageOrder);
+
+
+            document.getElementById(
+                "recordCount"
+            ).textContent =
+                totalOrders;
+
+
+            const tbody =
+                document.getElementById(
+                    "reportBody"
+                );
+
+
+            tbody.innerHTML = "";
+
+
+            if (
+                orders.length === 0
+            ) {
+
+                tbody.innerHTML = `
+
+                    <tr>
+
+                        <td
+                            colspan="8"
+                            class="text-center"
+                            style="padding:30px;"
+                        >
+                            No orders found.
+                        </td>
+
+                    </tr>
+
+                `;
+
+            }
+
+
+            orders.forEach(
+                (
+                    order,
+                    index
+                ) => {
+
+                    const row =
+                        document.createElement(
+                            "tr"
+                        );
+
+
+                    const customerName =
+                        order.customer_name ||
+                        (
+                            order.customer &&
+                            order.customer.name
+                        ) ||
+                        "Unknown Customer";
+
+
+                    const status =
+                        order.status ||
+                        "pending";
+
+
+                    const risk =
+                        order.risk_level ||
+                        "low";
+
+
+                    const amount =
+                        Number(
+                            order.total_amount || 0
+                        );
+
+
+                    const recovered =
+                        Number(
+                            order.recovered_amount || 0
+                        );
+
+
+                    row.innerHTML = `
+
+                        <td>
+                            ${index + 1}
+                        </td>
+
+                        <td>
+                            <strong>
+                                ${escapeHtml(
+                                    order.order_number || "-"
+                                )}
+                            </strong>
+                        </td>
+
+                        <td>
+                            ${escapeHtml(
+                                customerName
+                            )}
+                        </td>
+
+                        <td>
+                            ${statusBadge(
+                                status
+                            )}
+                        </td>
+
+                        <td>
+                            ${riskBadge(
+                                risk
+                            )}
+                        </td>
+
+                        <td class="text-right">
+                            ${money(
+                                amount
+                            )}
+                        </td>
+
+                        <td class="text-right">
+                            ${money(
+                                recovered
+                            )}
+                        </td>
+
+                        <td>
+                            ${formatDate(
+                                order.created_at
+                            )}
+                        </td>
+
+                    `;
+
+
+                    tbody.appendChild(
+                        row
+                    );
+
+                }
+            );
+
+
+            document.getElementById(
+                "loading"
+            ).style.display =
+                "none";
+
+
+            document.getElementById(
+                "error"
+            ).style.display =
+                "none";
+
+
+            document.getElementById(
+                "report"
+            ).style.display =
+                "block";
+
+        }
+
+
+        /*
+        ========================================================
+        STATUS
+        ========================================================
+        */
+
+        function statusBadge(
+            status
+        ) {
+
+            let className =
+                "status-other";
+
+
+            if (
+                status === "approved" ||
+                status === "fulfillment_ready" ||
+                status === "completed"
+            ) {
+
+                className =
+                    "status-approved";
+
+            }
+
+            else if (
+                status === "review" ||
+                status === "manual_review" ||
+                status === "inventory_review"
+            ) {
+
+                className =
+                    "status-review";
+
+            }
+
+            else if (
+                status === "pending"
+            ) {
+
+                className =
+                    "status-pending";
+
+            }
+
+
+            return `
+                <span class="status ${className}">
+                    ${escapeHtml(status)}
+                </span>
+            `;
+
+        }
+
+
+        /*
+        ========================================================
+        RISK
+        ========================================================
+        */
+
+        function riskBadge(
+            risk
+        ) {
+
+            let className =
+                "risk-low";
+
+
+            if (
+                risk === "high"
+            ) {
+
+                className =
+                    "risk-high";
+
+            }
+
+            else if (
+                risk === "medium"
+            ) {
+
+                className =
+                    "risk-medium";
+
+            }
+
+
+            return `
+                <span class="${className}">
+                    ${escapeHtml(risk)}
+                </span>
+            `;
+
+        }
+
+
+        /*
+        ========================================================
+        DATE
+        ========================================================
+        */
+
+        function formatDate(
+            value
+        ) {
+
+            if (!value) {
+                return "-";
+            }
+
+
+            const date =
+                new Date(value);
+
+
+            if (
+                Number.isNaN(
+                    date.getTime()
+                )
+            ) {
+
+                return value;
+
+            }
+
+
+            return date.toLocaleDateString(
+                "en-PK",
+                {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric"
+                }
+            );
+
+        }
+
+
+        /*
+        ========================================================
+        ESCAPE HTML
+        ========================================================
+        */
+
+        function escapeHtml(
+            value
+        ) {
+
+            return String(
+                value ?? ""
+            )
+                .replace(
+                    /&/g,
+                    "&amp;"
+                )
+                .replace(
+                    /</g,
+                    "&lt;"
+                )
+                .replace(
+                    />/g,
+                    "&gt;"
+                )
+                .replace(
+                    /"/g,
+                    "&quot;"
+                )
+                .replace(
+                    /'/g,
+                    "&#039;"
+                );
+
+        }
+
+
+        /*
+        ========================================================
+        INIT
+        ========================================================
+        */
+
+        async function init() {
+
+            try {
+
+                /*
+                 * FIRST:
+                 * Read latest Settings
+                 */
+
+                applyBusinessSettings();
+
+
+                /*
+                 * Generated date
+                 */
+
+                document.getElementById(
+                    "generatedDate"
+                ).textContent =
+                    new Date().toLocaleString(
+                        "en-PK",
+                        {
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit"
+                        }
+                    );
+
+
+                /*
+                 * THEN:
+                 * Load report
+                 */
+
+                await loadReport();
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "Report loading error:",
+                    error
+                );
+
+
+                document.getElementById(
+                    "loading"
+                ).style.display =
+                    "none";
+
+
+                const errorBox =
+                    document.getElementById(
+                        "error"
+                    );
+
+
+                errorBox.style.display =
+                    "block";
+
+
+                errorBox.textContent =
+                    "Unable to load report: " +
+                    (
+                        error.message ||
+                        "Unknown error"
+                    );
+
+            }
+
+        }
+
+
+        /*
+        ========================================================
+        START
+        ========================================================
+        */
+
+        init();
+
+    </script>
+
+</body>
+
+</html>

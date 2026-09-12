@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Settings | OrderOps AI</title>
+
+<link rel="stylesheet"
+href="css/app.css">
+
+</head>
+
+<body>
+
+<aside class="sidebar">
+
+<div class="logo">
+Order<span>Ops</span> AI
+</div>
+
+<a class="nav-link"
+href="dashboard.html">
+📊 Dashboard
+</a>
+
+<a class="nav-link"
+href="customers.html">
+👥 Customers
+</a>
+
+<a class="nav-link"
+href="products.html">
+📦 Products
+</a>
+
+<a class="nav-link"
+href="orders.html">
+🧾 Orders
+</a>
+
+<a class="nav-link"
+href="review-queue.html">
+⚠️ Review Queue
+</a>
+
+<a class="nav-link"
+href="ai-agents.html">
+🤖 AI Agents
+</a>
+
+<a class="nav-link"
+href="reports.html">
+📈 Reports
+</a>
+
+<a class="nav-link active"
+href="settings.html">
+⚙️ Settings
+</a>
+
+<a class="nav-link"
+href="#"
+onclick="logout();return false;">
+🚪 Logout
+</a>
+
+</aside>
+
+
+<main class="main">
+
+<div class="topbar">
+
+<div>
+
+<h1 class="page-title">
+Settings
+</h1>
+
+<div class="page-subtitle">
+Manage your OrderOps AI workspace and print branding
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =========================
+     WORKSPACE SETTINGS
+========================= -->
+
+<div class="card">
+
+<h2 class="card-title">
+Workspace & Print Settings
+</h2>
+
+<br>
+
+
+<form id="settingsForm"
+class="form-grid">
+
+
+<div class="field">
+
+<label>
+Workspace / Company Name
+</label>
+
+<input
+id="workspaceName"
+type="text"
+placeholder="OrderOps AI">
+
+</div>
+
+
+<div class="field">
+
+<label>
+Currency
+</label>
+
+<select id="currency">
+
+<option value="PKR">
+PKR - Pakistani Rupee
+</option>
+
+<option value="USD">
+USD - US Dollar
+</option>
+
+</select>
+
+</div>
+
+
+<div class="field">
+
+<label>
+Phone Number
+</label>
+
+<input
+id="phone"
+type="text"
+placeholder="+92 XXX XXXXXXX">
+
+</div>
+
+
+<div class="field">
+
+<label>
+Email Address
+</label>
+
+<input
+id="email"
+type="email"
+placeholder="business@example.com">
+
+</div>
+
+
+<div class="field full">
+
+<label>
+Business Address
+</label>
+
+<input
+id="address"
+type="text"
+placeholder="Business address">
+
+</div>
+
+
+<div class="field full">
+
+<label>
+System / Business Description
+</label>
+
+<textarea
+id="description"
+rows="4"
+placeholder="Business description"></textarea>
+
+</div>
+
+
+<div class="field">
+
+<label>
+Bank Name
+</label>
+
+<input
+id="bankName"
+type="text"
+placeholder="Bank name">
+
+</div>
+
+
+<div class="field">
+
+<label>
+Bank Account Title
+</label>
+
+<input
+id="accountTitle"
+type="text"
+placeholder="Account title">
+
+</div>
+
+
+<div class="field">
+
+<label>
+Account Number / IBAN
+</label>
+
+<input
+id="accountNumber"
+type="text"
+placeholder="Account number or IBAN">
+
+</div>
+
+
+<div class="field">
+
+<label>
+JazzCash Number
+</label>
+
+<input
+id="jazzcash"
+type="text"
+placeholder="03XXXXXXXXX">
+
+</div>
+
+
+<div class="actions">
+
+<button
+class="btn"
+type="submit">
+
+💾 Save Settings
+
+</button>
+
+
+<button
+class="btn btn-danger"
+type="button"
+onclick="logout()">
+
+🚪 Logout
+
+</button>
+
+</div>
+
+</form>
+
+</div>
+
+
+<!-- =========================
+     LOGO
+========================= -->
+
+<div class="card">
+
+<h2 class="card-title">
+Business Logo
+</h2>
+
+<br>
+
+<div class="field">
+
+<label>
+Logo Image
+</label>
+
+<input
+id="logoInput"
+type="file"
+accept="image/png,image/jpeg,image/webp">
+
+</div>
+
+
+<div
+style="
+margin-top:20px;
+display:flex;
+align-items:center;
+gap:20px;
+flex-wrap:wrap;
+">
+
+<div
+style="
+width:120px;
+height:120px;
+border:1px solid #ddd;
+border-radius:12px;
+display:flex;
+align-items:center;
+justify-content:center;
+overflow:hidden;
+background:#f8fafc;
+">
+
+<img
+id="logoPreview"
+alt="Business Logo"
+style="
+max-width:100%;
+max-height:100%;
+object-fit:contain;
+">
+
+</div>
+
+<div>
+
+<div
+style="
+font-size:14px;
+color:#64748b;
+margin-bottom:8px;
+">
+
+This logo will be used on printable invoices and reports.
+
+</div>
+
+<button
+type="button"
+class="btn"
+onclick="removeLogo()">
+
+Remove Logo
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =========================
+     CURRENT USER
+========================= -->
+
+<div class="card">
+
+<h2 class="card-title">
+Current User
+</h2>
+
+<br>
+
+<div id="userInfo">
+Loading...
+</div>
+
+</div>
+
+
+<!-- =========================
+     SYSTEM INFORMATION
+========================= -->
+
+<div class="card">
+
+<h2 class="card-title">
+System Information
+</h2>
+
+<br>
+
+<div class="activity-item">
+
+<div class="activity-node">
+OrderOps AI
+</div>
+
+<div class="activity-message">
+Autonomous Order Triage & Resolution Agent
+</div>
+
+</div>
+
+</div>
+
+</main>
+
+
+<script src="js/api.js"></script>
+
+
+<script>
+
+/* =========================================================
+   ORDEROPS AI SETTINGS
+   Central frontend settings storage
+========================================================= */
+
+const SETTINGS_KEY = "orderops_settings";
+
+
+const DEFAULT_SETTINGS = {
+
+    workspaceName: "OrderOps AI",
+
+    currency: "PKR",
+
+    phone: "",
+
+    email: "",
+
+    address: "",
+
+    description:
+        "Autonomous Order Operations powered by AI agents.",
+
+    bankName: "",
+
+    accountTitle: "",
+
+    accountNumber: "",
+
+    jazzcash: "",
+
+    logo: ""
+
+};
+
+
+/* =========================================================
+   GET SETTINGS
+========================================================= */
+
+function getSettings() {
+
+    try {
+
+        const saved =
+            JSON.parse(
+                localStorage.getItem(
+                    SETTINGS_KEY
+                ) || "{}"
+            );
+
+        return {
+            ...DEFAULT_SETTINGS,
+            ...saved
+        };
+
+    }
+
+    catch(error) {
+
+        console.error(
+            "Settings read error:",
+            error
+        );
+
+        return {
+            ...DEFAULT_SETTINGS
+        };
+
+    }
+
+}
+
+
+/* =========================================================
+   SAVE SETTINGS
+========================================================= */
+
+function saveSettings(settings) {
+
+    localStorage.setItem(
+        SETTINGS_KEY,
+        JSON.stringify(settings)
+    );
+
+}
+
+
+/* =========================================================
+   LOAD SETTINGS INTO FORM
+========================================================= */
+
+function loadWorkspaceSettings() {
+
+    const settings =
+        getSettings();
+
+
+    document.getElementById(
+        "workspaceName"
+    ).value =
+        settings.workspaceName;
+
+
+    document.getElementById(
+        "currency"
+    ).value =
+        settings.currency;
+
+
+    document.getElementById(
+        "phone"
+    ).value =
+        settings.phone;
+
+
+    document.getElementById(
+        "email"
+    ).value =
+        settings.email;
+
+
+    document.getElementById(
+        "address"
+    ).value =
+        settings.address;
+
+
+    document.getElementById(
+        "description"
+    ).value =
+        settings.description;
+
+
+    document.getElementById(
+        "bankName"
+    ).value =
+        settings.bankName;
+
+
+    document.getElementById(
+        "accountTitle"
+    ).value =
+        settings.accountTitle;
+
+
+    document.getElementById(
+        "accountNumber"
+    ).value =
+        settings.accountNumber;
+
+
+    document.getElementById(
+        "jazzcash"
+    ).value =
+        settings.jazzcash;
+
+
+    updateLogoPreview(
+        settings.logo
+    );
+
+}
+
+
+/* =========================================================
+   LOGO PREVIEW
+========================================================= */
+
+function updateLogoPreview(
+    logo
+) {
+
+    const preview =
+        document.getElementById(
+            "logoPreview"
+        );
+
+
+    if (logo) {
+
+        preview.src = logo;
+
+    }
+
+    else {
+
+        preview.removeAttribute(
+            "src"
+        );
+
+        preview.alt =
+            "No logo selected";
+
+    }
+
+}
+
+
+/* =========================================================
+   LOGO FILE
+========================================================= */
+
+document.getElementById(
+    "logoInput"
+).addEventListener(
+    "change",
+    function(event) {
+
+        const file =
+            event.target.files[0];
+
+
+        if (!file) {
+            return;
+        }
+
+
+        if (!file.type.startsWith("image/")) {
+
+            alert(
+                "Please select a valid image file."
+            );
+
+            return;
+
+        }
+
+
+        const reader =
+            new FileReader();
+
+
+        reader.onload =
+            function(e) {
+
+                const settings =
+                    getSettings();
+
+
+                settings.logo =
+                    e.target.result;
+
+
+                saveSettings(
+                    settings
+                );
+
+
+                updateLogoPreview(
+                    settings.logo
+                );
+
+
+                alert(
+                    "Logo updated successfully."
+                );
+
+            };
+
+
+        reader.readAsDataURL(
+            file
+        );
+
+    }
+);
+
+
+/* =========================================================
+   REMOVE LOGO
+========================================================= */
+
+function removeLogo() {
+
+    const settings =
+        getSettings();
+
+
+    settings.logo = "";
+
+
+    saveSettings(
+        settings
+    );
+
+
+    updateLogoPreview(
+        ""
+    );
+
+
+    document.getElementById(
+        "logoInput"
+    ).value = "";
+
+
+    alert(
+        "Logo removed successfully."
+    );
+
+}
+
+
+/* =========================================================
+   SAVE FORM
+========================================================= */
+
+document.getElementById(
+    "settingsForm"
+).addEventListener(
+    "submit",
+    function(event) {
+
+        event.preventDefault();
+
+
+        const oldSettings =
+            getSettings();
+
+
+        const settings = {
+
+            workspaceName:
+                document
+                .getElementById(
+                    "workspaceName"
+                )
+                .value
+                .trim() ||
+                "OrderOps AI",
+
+
+            currency:
+                document
+                .getElementById(
+                    "currency"
+                )
+                .value,
+
+
+            phone:
+                document
+                .getElementById(
+                    "phone"
+                )
+                .value
+                .trim(),
+
+
+            email:
+                document
+                .getElementById(
+                    "email"
+                )
+                .value
+                .trim(),
+
+
+            address:
+                document
+                .getElementById(
+                    "address"
+                )
+                .value
+                .trim(),
+
+
+            description:
+                document
+                .getElementById(
+                    "description"
+                )
+                .value
+                .trim(),
+
+
+            bankName:
+                document
+                .getElementById(
+                    "bankName"
+                )
+                .value
+                .trim(),
+
+
+            accountTitle:
+                document
+                .getElementById(
+                    "accountTitle"
+                )
+                .value
+                .trim(),
+
+
+            accountNumber:
+                document
+                .getElementById(
+                    "accountNumber"
+                )
+                .value
+                .trim(),
+
+
+            jazzcash:
+                document
+                .getElementById(
+                    "jazzcash"
+                )
+                .value
+                .trim(),
+
+
+            /*
+             * IMPORTANT:
+             * Existing logo is preserved
+             * when only text settings are saved.
+             */
+
+            logo:
+                oldSettings.logo || ""
+
+        };
+
+
+        saveSettings(
+            settings
+        );
+
+
+        alert(
+            "Settings saved successfully. Print pages will use the latest settings."
+        );
+
+    }
+);
+
+
+/* =========================================================
+   CURRENT USER
+========================================================= */
+
+async function loadUserInfo() {
+
+    try {
+
+        const user =
+            await getCurrentUser();
+
+
+        document.getElementById(
+            "userInfo"
+        ).innerHTML = `
+
+            <div class="activity-item">
+
+                <div class="activity-node">
+
+                    ${escapeHtml(
+                        user.full_name
+                    )}
+
+                </div>
+
+                <div class="activity-message">
+
+                    ${escapeHtml(
+                        user.email
+                    )}
+
+                </div>
+
+                <div class="activity-date">
+
+                    Account ID:
+                    ${user.id}
+
+                    ·
+
+                    ${
+                        user.is_active
+                        ? "Active"
+                        : "Inactive"
+                    }
+
+                </div>
+
+            </div>
+
+        `;
+
+    }
+
+    catch(error) {
+
+        document.getElementById(
+            "userInfo"
+        ).textContent =
+            error.message;
+
+    }
+
+}
+
+
+/* =========================================================
+   INITIAL LOAD
+========================================================= */
+
+if (requireAuth()) {
+
+    loadWorkspaceSettings();
+
+    loadUserInfo();
+
+}
+
+</script>
+
+</body>
+</html>
