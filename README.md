@@ -891,3 +891,9 @@ A formal open-source license can be added in the future depending on the project
 **Intelligent Operations. Automated Decisions. Better Business.**
 
 OrderOps AI brings customers, products, orders, inventory, risk analysis, fulfillment, reporting, and AI-powered business intelligence together in one modern platform.
+
+### LinkedIn
+
+[Connect with me on LinkedIn](www.linkedin.com/in/
+almeerahmed610ai
+)
